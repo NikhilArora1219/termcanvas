@@ -166,22 +166,74 @@ export class CanvasNodeService {
   /**
    * Create a terminal node
    */
-  createTerminalNode(options: CreateNodeOptions): Node {
+  createTerminalNode(
+    options: CreateNodeOptions & { command?: string; label?: string; cwd?: string }
+  ): Node {
     const nodePosition = this.resolvePosition(options);
     const terminalId = `terminal-${crypto.randomUUID()}`;
 
     return {
-      id: `node-${Date.now()}`,
+      id: `node-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
       type: 'terminal',
       position: nodePosition,
       data: {
         terminalId,
+        command: options.command,
+        label: options.label,
+        cwd: options.cwd,
       },
       style: {
         width: 600,
         height: 400,
       },
     };
+  }
+
+  /**
+   * Create multiple terminal nodes in a grid layout
+   */
+  createTerminalNodesGrid(options: {
+    commands: Array<{ command?: string; label?: string; cwd?: string }>;
+    startPosition: { x: number; y: number };
+    columns?: number;
+    nodeWidth?: number;
+    nodeHeight?: number;
+    gap?: number;
+  }): Node[] {
+    const {
+      commands,
+      startPosition,
+      columns,
+      nodeWidth = 600,
+      nodeHeight = 400,
+      gap = 24,
+    } = options;
+    const cols = columns ?? Math.ceil(Math.sqrt(commands.length));
+
+    return commands.map((cmd, i) => {
+      const col = i % cols;
+      const row = Math.floor(i / cols);
+      const terminalId = `terminal-${crypto.randomUUID()}`;
+
+      return {
+        id: `node-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+        type: 'terminal' as const,
+        position: {
+          x: startPosition.x + col * (nodeWidth + gap),
+          y: startPosition.y + row * (nodeHeight + gap),
+        },
+        data: {
+          terminalId,
+          command: cmd.command,
+          label: cmd.label,
+          cwd: cmd.cwd,
+        },
+        style: {
+          width: nodeWidth,
+          height: nodeHeight,
+        },
+      };
+    });
   }
 
   /**

@@ -22,6 +22,18 @@ export interface UseCanvasActionsReturn {
   addAgentNode: (position?: { x: number; y: number }) => void;
   /** Add a terminal node to the canvas */
   addTerminalNode: (position?: { x: number; y: number }) => void;
+  /** Add a terminal node with a specific command */
+  addCommandTerminal: (
+    command: string,
+    label?: string,
+    cwd?: string,
+    position?: { x: number; y: number }
+  ) => void;
+  /** Add multiple terminal nodes in a grid layout */
+  addTerminalGrid: (
+    commands: Array<{ command?: string; label?: string; cwd?: string }>,
+    position?: { x: number; y: number }
+  ) => void;
   /** Add a starter node to the canvas */
   addStarterNode: (position?: { x: number; y: number }) => void;
   /** Add a Claude Code terminal node (auto-starts claude command) */
@@ -208,9 +220,66 @@ export function useCanvasActions({
     [contextMenu, screenToFlowPosition, setNodes, closeContextMenu]
   );
 
+  /**
+   * Add a terminal node with a specific command
+   */
+  const addCommandTerminal = useCallback(
+    (command: string, label?: string, cwd?: string, position?: { x: number; y: number }) => {
+      const newNode = canvasNodeService.createTerminalNode({
+        position,
+        contextMenuPosition: contextMenu,
+        screenToFlowPosition,
+        command,
+        label,
+        cwd,
+      });
+
+      setNodes((nds) => [...nds, newNode]);
+      closeContextMenu();
+    },
+    [contextMenu, screenToFlowPosition, setNodes, closeContextMenu]
+  );
+
+  /**
+   * Add multiple terminal nodes in a grid layout
+   */
+  const addTerminalGrid = useCallback(
+    (
+      commands: Array<{ command?: string; label?: string; cwd?: string }>,
+      position?: { x: number; y: number }
+    ) => {
+      let startPosition = position;
+
+      if (!startPosition && contextMenu) {
+        startPosition = screenToFlowPosition({
+          x: contextMenu.x,
+          y: contextMenu.y,
+        });
+      }
+
+      if (!startPosition) {
+        startPosition = screenToFlowPosition({
+          x: window.innerWidth / 2,
+          y: window.innerHeight / 2,
+        });
+      }
+
+      const newNodes = canvasNodeService.createTerminalNodesGrid({
+        commands,
+        startPosition,
+      });
+
+      setNodes((nds) => [...nds, ...newNodes]);
+      closeContextMenu();
+    },
+    [contextMenu, screenToFlowPosition, setNodes, closeContextMenu]
+  );
+
   return {
     addAgentNode,
     addTerminalNode,
+    addCommandTerminal,
+    addTerminalGrid,
     addStarterNode,
     addClaudeCodeTerminal,
     addBrowserNode,
