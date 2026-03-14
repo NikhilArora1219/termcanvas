@@ -25,7 +25,7 @@ import {
   TERMINAL_MARKER,
   type TerminalEnvParams,
   validateHookRequest,
-} from '@agent-orchestrator/shared';
+} from '@termcanvas/shared';
 
 /**
  * Resolve the current git branch for a workspace path.

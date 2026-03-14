@@ -9,7 +9,7 @@ import type {
   ClarifyingQuestionAction,
   ToolApprovalAction,
   ToolApprovalDecision,
-} from '@agent-orchestrator/shared';
+} from '@termcanvas/shared';
 import { useCallback, useEffect } from 'react';
 import './ActionPill.css';
 import { ActionPillPresentation } from './ActionPillPresentation';

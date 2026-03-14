@@ -1,7 +1,7 @@
 /**
  * CodingAgentStatusManager Type Definitions
  *
- * Domain types are re-exported from @agent-orchestrator/shared.
+ * Domain types are re-exported from @termcanvas/shared.
  * DI interfaces for desktop-specific implementations are defined locally.
  */
 
@@ -16,7 +16,7 @@ export type {
   CodingAgentStatusInfo,
   TitleConfig,
   ToolType,
-} from '@agent-orchestrator/shared';
+} from '@termcanvas/shared';
 
 // Import for use in local interfaces
 import type {
@@ -25,7 +25,7 @@ import type {
   CodingAgentStatus,
   CodingAgentStatusInfo,
   TitleConfig,
-} from '@agent-orchestrator/shared';
+} from '@termcanvas/shared';
 
 // =============================================================================
 // Dependency Interfaces (for DI - desktop-specific)

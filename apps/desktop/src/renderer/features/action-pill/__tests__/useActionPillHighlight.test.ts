@@ -4,7 +4,7 @@
  * Tests the highlight behavior for ActionPill feature.
  */
 
-import type { ToolApprovalAction } from '@agent-orchestrator/shared';
+import type { ToolApprovalAction } from '@termcanvas/shared';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { useActionPillStore } from '../store/actionPillStore';
 

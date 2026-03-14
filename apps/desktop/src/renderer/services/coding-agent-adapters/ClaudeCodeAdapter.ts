@@ -12,7 +12,7 @@
  * - Is stateless - all parameters must be provided per-request
  */
 
-import type { PermissionMode } from '@agent-orchestrator/shared';
+import type { PermissionMode } from '@termcanvas/shared';
 import type { AgentType } from '../../../../types/coding-agent-status';
 import type {
   AgentAdapterEventType,

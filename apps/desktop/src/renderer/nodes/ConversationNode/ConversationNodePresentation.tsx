@@ -6,7 +6,7 @@
  * Uses useConversationService() hook for data access.
  */
 
-import type { CodingAgentMessage } from '@agent-orchestrator/shared';
+import type { CodingAgentMessage } from '@termcanvas/shared';
 import { Handle, Position } from '@xyflow/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';

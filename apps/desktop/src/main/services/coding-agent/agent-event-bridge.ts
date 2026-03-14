@@ -1,4 +1,4 @@
-import type { AgentActionResponse, AgentEvent } from '@agent-orchestrator/shared';
+import type { AgentActionResponse, AgentEvent } from '@termcanvas/shared';
 import { BrowserWindow, ipcMain } from 'electron';
 
 interface PendingAction {

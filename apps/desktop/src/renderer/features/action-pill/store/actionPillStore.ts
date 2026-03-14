@@ -5,7 +5,7 @@
  * Replaces the class-based AgentActionStore and local useState calls.
  */
 
-import type { AgentAction } from '@agent-orchestrator/shared';
+import type { AgentAction } from '@termcanvas/shared';
 import { create } from 'zustand';
 import type { ActionPillState, PillAnimationState } from './types';
 

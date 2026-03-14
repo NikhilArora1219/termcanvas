@@ -8,7 +8,7 @@ import type {
   ClarifyingQuestionAction,
   ToolApprovalAction,
   ToolApprovalDecision,
-} from '@agent-orchestrator/shared';
+} from '@termcanvas/shared';
 
 export interface IActionPillService {
   /**

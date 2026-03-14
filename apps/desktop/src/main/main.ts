@@ -8,7 +8,7 @@ import type {
   GitInfo,
   RecentWorkspace,
   TerminalSessionState,
-} from '@agent-orchestrator/shared';
+} from '@termcanvas/shared';
 import { app, BrowserWindow, dialog, ipcMain, shell } from 'electron';
 import * as pty from 'node-pty';
 import type { CodingAgentState } from '../../types/coding-agent-status';
@@ -65,7 +65,7 @@ import type {
   EventRegistry,
   EventResult,
   PermissionPayload,
-} from '@agent-orchestrator/shared';
+} from '@termcanvas/shared';
 import { getLogServer, isMcpMode, startMcpServer, stopMcpServer } from '../instrumentation';
 import type {
   CodingAgentType,

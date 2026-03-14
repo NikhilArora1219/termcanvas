@@ -8,7 +8,7 @@
  * - Clear contract for what query execution provides
  */
 
-import type { StreamingChunk } from '@agent-orchestrator/shared';
+import type { StreamingChunk } from '@termcanvas/shared';
 import type { GenerateResponse } from '../types';
 
 /**

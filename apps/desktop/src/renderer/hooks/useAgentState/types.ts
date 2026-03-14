@@ -5,7 +5,7 @@
  * This is THE source of truth for understanding what state an agent can have.
  */
 
-import type { GitInfo } from '@agent-orchestrator/shared';
+import type { GitInfo } from '@termcanvas/shared';
 import type { AgentType, CodingAgentStatus } from '../../../../types/coding-agent-status';
 import type { AgentNodeData } from '../../types/agent-node';
 

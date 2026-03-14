@@ -19,7 +19,7 @@
  *   createPermissionHandler,
  *   PERMISSION_PRESETS,
  *   ClaudeCodeAdapter,
- * } from '@agent-orchestrator/shared';
+ * } from '@termcanvas/shared';
  *
  * // Create event registry
  * const registry = createEventRegistry();

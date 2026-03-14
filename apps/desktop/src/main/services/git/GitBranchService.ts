@@ -7,7 +7,7 @@
 
 import { spawn } from 'node:child_process';
 import * as fs from 'node:fs';
-import type { GitInfo } from '@agent-orchestrator/shared';
+import type { GitInfo } from '@termcanvas/shared';
 
 /**
  * Run a git command and return stdout

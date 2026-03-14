@@ -6,8 +6,8 @@
  * Displays messages exactly like ConversationNode.
  */
 
-import type { AgentContentBlock, PermissionMode } from '@agent-orchestrator/shared';
-import { useExpose } from '@agent-orchestrator/shared';
+import type { AgentContentBlock, PermissionMode } from '@termcanvas/shared';
+import { useExpose } from '@termcanvas/shared';
 import { useReactFlow } from '@xyflow/react';
 import { marked } from 'marked';
 import { useCallback, useEffect, useRef, useState } from 'react';

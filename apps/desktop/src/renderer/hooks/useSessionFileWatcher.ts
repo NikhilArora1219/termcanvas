@@ -1,4 +1,4 @@
-import type { CodingAgentType, SessionFileChangeEvent } from '@agent-orchestrator/shared';
+import type { CodingAgentType, SessionFileChangeEvent } from '@termcanvas/shared';
 import { useCallback, useEffect, useRef } from 'react';
 
 /**

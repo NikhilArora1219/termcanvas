@@ -3,7 +3,7 @@
  * Defines the contract that all database implementations must follow
  */
 
-import type { RecentWorkspace } from '@agent-orchestrator/shared';
+import type { RecentWorkspace } from '@termcanvas/shared';
 import type { CodingAgentState } from '../../../types/coding-agent-status';
 import type { CanvasMetadata, CanvasState } from '../types/database';
 

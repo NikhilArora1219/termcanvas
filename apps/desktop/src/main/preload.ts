@@ -8,7 +8,7 @@ import type {
   CodingAgentType as SharedCodingAgentType,
   TerminalSessionAPI,
   TerminalSessionState,
-} from '@agent-orchestrator/shared';
+} from '@termcanvas/shared';
 import { contextBridge, ipcRenderer } from 'electron';
 import type { CodingAgentState } from '../../types/coding-agent-status';
 import type {
@@ -637,7 +637,7 @@ contextBridge.exposeInMainWorld('fileAPI', {
 
 // Git info types
 // Re-export GitInfo from shared package for backward compatibility
-export type { GitInfo } from '@agent-orchestrator/shared';
+export type { GitInfo } from '@termcanvas/shared';
 
 // Type definitions for the git API
 export interface GitAPI {

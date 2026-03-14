@@ -2,7 +2,7 @@
  * Shared Type Definitions
  *
  * Re-exports all domain types for use across the monorepo.
- * Import from '@agent-orchestrator/shared' to access these types.
+ * Import from '@termcanvas/shared' to access these types.
  */
 
 // Agent Node types (progress, title, node data)

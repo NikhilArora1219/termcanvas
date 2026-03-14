@@ -1,4 +1,4 @@
-import type { JsonlFilterOptions } from '@agent-orchestrator/shared';
+import type { JsonlFilterOptions } from '@termcanvas/shared';
 import type { AgentError, Result } from '../../coding-agent/types';
 
 /**

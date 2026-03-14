@@ -8,7 +8,7 @@
  * Usage:
  * ```typescript
  * import { query } from "@anthropic-ai/claude-agent-sdk";
- * import { createEventRegistry, createSDKHookBridge } from "@agent-orchestrator/shared";
+ * import { createEventRegistry, createSDKHookBridge } from "@termcanvas/shared";
  *
  * const registry = createEventRegistry();
  * const { hooks, cleanup } = createSDKHookBridge(registry);

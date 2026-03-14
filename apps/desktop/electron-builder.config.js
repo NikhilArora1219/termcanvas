@@ -3,8 +3,8 @@
  * @type {import('electron-builder').Configuration}
  */
 module.exports = {
-  appId: 'com.agentbase.desktop',
-  productName: 'Agent Base',
+  appId: 'com.termcanvas.app',
+  productName: 'TermCanvas',
 
   directories: {
     output: 'release',
@@ -55,13 +55,19 @@ module.exports = {
   mac: {
     target: ['dmg', 'zip'],
     category: 'public.app-category.developer-tools',
-    // Use environment variable to control signing:
-    // - Set CSC_LINK to enable real signing (CI/release builds)
-    // - Unset or set to empty for ad-hoc signing (local development)
     hardenedRuntime: true,
     gatekeeperAssess: false,
     entitlements: 'build-resources/entitlements.mac.plist',
     entitlementsInherit: 'build-resources/entitlements.mac.plist',
+  },
+
+  win: {
+    target: ['nsis', 'zip'],
+  },
+
+  linux: {
+    target: ['AppImage', 'deb'],
+    category: 'Development',
   },
 
   afterSign: 'scripts/notarize.js',

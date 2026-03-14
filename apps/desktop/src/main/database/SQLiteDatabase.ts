@@ -3,7 +3,7 @@
  * Stores canvas state in a local SQLite database
  */
 
-import type { RecentWorkspace } from '@agent-orchestrator/shared';
+import type { RecentWorkspace } from '@termcanvas/shared';
 import sqlite3 from 'sqlite3';
 import type { CodingAgentState } from '../../../types/coding-agent-status';
 import type { CanvasEdge, CanvasMetadata, CanvasNode, CanvasState } from '../types/database';

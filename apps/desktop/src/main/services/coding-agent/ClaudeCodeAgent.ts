@@ -2,20 +2,20 @@ import { EventEmitter } from 'node:events';
 import * as fs from 'node:fs';
 import * as os from 'node:os';
 import * as path from 'node:path';
+import type { CanUseTool, PermissionResult } from '@anthropic-ai/claude-agent-sdk';
 import type {
   AgentEvent,
   PermissionMode,
   PermissionPayload,
   SessionPayload,
-} from '@agent-orchestrator/shared';
+} from '@termcanvas/shared';
 import {
   ClaudeCodeJsonlParser,
   createEventRegistry,
   createSDKHookBridge,
   type EventRegistry,
   type SDKHookBridge,
-} from '@agent-orchestrator/shared';
-import type { CanUseTool, PermissionResult } from '@anthropic-ai/claude-agent-sdk';
+} from '@termcanvas/shared';
 import { ForkAdapterFactory } from '../fork-adapters/factory/ForkAdapterFactory';
 import type { CodingAgent } from './CodingAgent';
 import type {

@@ -2,7 +2,7 @@
  * ActionPill Store Tests
  */
 
-import type { ToolApprovalAction } from '@agent-orchestrator/shared';
+import type { ToolApprovalAction } from '@termcanvas/shared';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useActionPillStore } from '../store/actionPillStore';
 

@@ -1,7 +1,7 @@
 /**
  * Agent Node Type Definitions
  *
- * Re-exports all agent node types from @agent-orchestrator/shared.
+ * Re-exports all agent node types from @termcanvas/shared.
  * This file is kept for backwards compatibility with existing imports.
  */
 
@@ -19,7 +19,7 @@ export type {
   PercentageProgress,
   TodoItem,
   TodoListProgress,
-} from '@agent-orchestrator/shared';
+} from '@termcanvas/shared';
 
 export {
   // Helper functions
@@ -30,4 +30,4 @@ export {
   // Type guards
   isPercentageProgress,
   isTodoListProgress,
-} from '@agent-orchestrator/shared';
+} from '@termcanvas/shared';

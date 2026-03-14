@@ -18,7 +18,7 @@ import type {
   ClarifyingQuestionAction,
   LifecycleEvent,
   ToolApprovalAction,
-} from '@agent-orchestrator/shared';
+} from '@termcanvas/shared';
 // ToolApprovalAction is used for lifecycle events → ActionPill
 import type { AgentAdapterEvent } from '../context/node-services/coding-agent-adapter';
 import { useActionPillStore } from '../features/action-pill';

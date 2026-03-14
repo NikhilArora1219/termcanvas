@@ -1,8 +1,8 @@
 import * as fs from 'node:fs';
 import * as os from 'node:os';
 import * as path from 'node:path';
-import type { JsonlFilterOptions } from '@agent-orchestrator/shared';
-import { JSONLFile } from '@agent-orchestrator/shared';
+import type { JsonlFilterOptions } from '@termcanvas/shared';
+import { JSONLFile } from '@termcanvas/shared';
 import type { AgentError, Result } from '../../coding-agent/types';
 import { AgentErrorCode, agentError, err, ok } from '../../coding-agent/types';
 import { filterJsonl } from '../filter';

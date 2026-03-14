@@ -1,12 +1,13 @@
 {
-  "name": "agent-orchestrator",
-  "version": "1.5.0",
-  "description": "Agent Orchestrator - A multi-agent orchestration system",
-  "license": "SEE LICENSE IN LICENSE",
+  "name": "termcanvas",
+  "version": "1.0.0",
+  "description": "Infinite canvas terminal multiplexer for coding agents",
+  "license": "MIT",
   "private": true,
+  "author": "Nikhil Arora <niarora>",
   "repository": {
     "type": "git",
-    "url": "https://github.com/AgentOrchestrator/AgentBase.git"
+    "url": "https://github.com/NikhilArora1219/termcanvas.git"
   },
   "overrides": {
     "@types/react": "^19",
@@ -32,8 +33,8 @@
     "test": "turbo run test",
     "type-check": "turbo run type-check",
     "clean": "rm -rf node_modules apps/*/node_modules packages/*/node_modules apps/*/.next apps/*/dist",
-    "dev:desktop": "npm run build --workspace=@agent-orchestrator/shared && npm run dev --workspace=desktop",
-    "dev:mcp": "npm run build --workspace=@agent-orchestrator/shared && npm run dev:mcp --workspace=desktop",
+    "dev:desktop": "npm run build --workspace=@termcanvas/shared && npm run dev --workspace=desktop",
+    "dev:mcp": "npm run build --workspace=@termcanvas/shared && npm run dev:mcp --workspace=desktop",
     "prepare": "husky"
   },
   "devDependencies": {

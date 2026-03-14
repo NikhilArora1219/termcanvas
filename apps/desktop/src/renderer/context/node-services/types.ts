@@ -5,7 +5,7 @@
  * Each node type gets appropriate services via NodeContext.
  */
 
-import type { GitInfo } from '@agent-orchestrator/shared';
+import type { GitInfo } from '@termcanvas/shared';
 import type {
   AgentType,
   CodingAgentStatus,

@@ -16,7 +16,7 @@
  *   agent.actions.setWorkspace(path)  // set workspace
  */
 
-import type { GitInfo } from '@agent-orchestrator/shared';
+import type { GitInfo } from '@termcanvas/shared';
 import { useReactFlow } from '@xyflow/react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useActionPillStore } from '../../features/action-pill';

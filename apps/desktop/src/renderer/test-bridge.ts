@@ -5,7 +5,7 @@
  * that are invoked from the main process MCP server.
  */
 
-import { getExposeRegistry } from '@agent-orchestrator/shared';
+import { getExposeRegistry } from '@termcanvas/shared';
 
 type RequestHandler = (payload: unknown) => Promise<unknown>;
 

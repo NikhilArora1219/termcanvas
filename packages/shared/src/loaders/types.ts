@@ -119,6 +119,7 @@ export type AgentType =
   | 'vscode'
   | 'windsurf'
   | 'factory'
+  | 'generic'
   | 'other';
 
 /**

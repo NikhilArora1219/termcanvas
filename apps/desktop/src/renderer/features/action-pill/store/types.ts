@@ -4,7 +4,7 @@
  * Defines the shape of the ActionPill Zustand store.
  */
 
-import type { AgentAction } from '@agent-orchestrator/shared';
+import type { AgentAction } from '@termcanvas/shared';
 
 /**
  * UI animation state for the pill expansion

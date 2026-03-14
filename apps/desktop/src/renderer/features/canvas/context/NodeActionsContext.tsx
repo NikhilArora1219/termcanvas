@@ -9,7 +9,7 @@
  * - After: Component calls context method → direct setNodes call → no re-subscription cycle
  */
 
-import type { CodingAgentStatus, GitInfo, TerminalAttachment } from '@agent-orchestrator/shared';
+import type { CodingAgentStatus, GitInfo, TerminalAttachment } from '@termcanvas/shared';
 import type { Node } from '@xyflow/react';
 import { useReactFlow } from '@xyflow/react';
 import { createContext, type ReactNode, useCallback, useContext, useMemo } from 'react';

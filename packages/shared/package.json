@@ -1,8 +1,8 @@
 {
-  "name": "@agent-orchestrator/shared",
+  "name": "@termcanvas/shared",
   "version": "1.0.0",
-  "description": "Shared types and utilities for Agent Orchestrator",
-  "license": "SEE LICENSE IN ../../LICENSE",
+  "description": "Shared types and utilities for TermCanvas",
+  "license": "MIT",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

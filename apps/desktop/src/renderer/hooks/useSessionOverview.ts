@@ -6,8 +6,8 @@
  * Replaces individual sync mechanisms (useAutoTitleFromSession, direct status subscriptions).
  */
 
-import type { CodingAgentMessage, CodingAgentType } from '@agent-orchestrator/shared';
-import { extractLatestTodoList, toTodoListProgress } from '@agent-orchestrator/shared';
+import type { CodingAgentMessage, CodingAgentType } from '@termcanvas/shared';
+import { extractLatestTodoList, toTodoListProgress } from '@termcanvas/shared';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { CodingAgentStatusInfo } from '../../../types/coding-agent-status';
 import type { IAgentService } from '../context/node-services/types';

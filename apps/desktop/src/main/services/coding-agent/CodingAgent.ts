@@ -33,7 +33,7 @@
  */
 
 import type { EventEmitter } from 'node:events';
-import type { EventRegistry } from '@agent-orchestrator/shared';
+import type { EventRegistry } from '@termcanvas/shared';
 
 // Re-export types that are part of the public API
 export type {
@@ -357,6 +357,11 @@ async function createAgentInstance(
       // Use dynamic import for ESM compatibility (required for Vitest)
       const { ClaudeCodeAgent } = await import('./ClaudeCodeAgent');
       return ok(new ClaudeCodeAgent(fullConfig) as CodingAgent);
+    }
+
+    case 'generic': {
+      const { GenericTerminalAgent } = await import('./GenericTerminalAgent');
+      return ok(new GenericTerminalAgent(fullConfig) as CodingAgent);
     }
 
     default:

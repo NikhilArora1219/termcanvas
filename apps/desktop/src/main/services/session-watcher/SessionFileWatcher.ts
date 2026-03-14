@@ -5,7 +5,7 @@ import type {
   CodingAgentType,
   SessionFileChangeEvent,
   SessionFileChangeType,
-} from '@agent-orchestrator/shared';
+} from '@termcanvas/shared';
 
 /**
  * Configuration for SessionFileWatcher

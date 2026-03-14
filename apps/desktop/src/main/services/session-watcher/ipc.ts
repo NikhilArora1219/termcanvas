@@ -1,4 +1,4 @@
-import type { CodingAgentType, SessionFileChangeEvent } from '@agent-orchestrator/shared';
+import type { CodingAgentType, SessionFileChangeEvent } from '@termcanvas/shared';
 import { type BrowserWindow, ipcMain } from 'electron';
 import { getCodingAgent } from '../coding-agent';
 import { SessionFileWatcher } from './SessionFileWatcher';

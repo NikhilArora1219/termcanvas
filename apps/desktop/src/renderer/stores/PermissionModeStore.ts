@@ -5,7 +5,7 @@
  * Supports global default and per-agent overrides with localStorage persistence.
  */
 
-import type { PermissionMode } from '@agent-orchestrator/shared';
+import type { PermissionMode } from '@termcanvas/shared';
 
 const STORAGE_KEY = 'permission-mode-state';
 const DEFAULT_MODE: PermissionMode = 'ask';

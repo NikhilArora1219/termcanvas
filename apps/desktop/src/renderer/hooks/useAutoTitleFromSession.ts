@@ -5,7 +5,7 @@
  * to the last user message in the session.
  */
 
-import type { CodingAgentType } from '@agent-orchestrator/shared';
+import type { CodingAgentType } from '@termcanvas/shared';
 import { useCallback, useEffect, useRef } from 'react';
 import type { IAgentService } from '../context';
 import { useSessionFileWatcher } from './useSessionFileWatcher';

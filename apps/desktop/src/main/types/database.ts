@@ -1,7 +1,7 @@
 /**
  * Database Type Definitions
  *
- * Re-exports canvas and node types from @agent-orchestrator/shared.
+ * Re-exports canvas and node types from @termcanvas/shared.
  * This file is kept for backwards compatibility with existing imports.
  */
 
@@ -21,9 +21,9 @@ export type {
   // Node data types
   TerminalNodeData,
   Viewport,
-} from '@agent-orchestrator/shared';
+} from '@termcanvas/shared';
 export {
   // Type guards
   isAgentNodeData,
   isTerminalNodeData,
-} from '@agent-orchestrator/shared';
+} from '@termcanvas/shared';

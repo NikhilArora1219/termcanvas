@@ -3,7 +3,7 @@
  */
 
 import * as path from 'node:path';
-import { HOOKS_DIRS, SCRIPT_FILES } from '@agent-orchestrator/shared';
+import { HOOKS_DIRS, SCRIPT_FILES } from '@termcanvas/shared';
 
 /**
  * Get the base directory for agent hooks configuration

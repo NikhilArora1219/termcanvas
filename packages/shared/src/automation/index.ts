@@ -6,7 +6,7 @@
  *
  * @example
  * // In a React component
- * import { useExpose } from '@agent-orchestrator/shared/automation';
+ * import { useExpose } from '@termcanvas/shared/automation';
  *
  * function ChatInput({ onSend }) {
  *   const [value, setValue] = useState('');
@@ -16,7 +16,7 @@
  *
  * @example
  * // For DOM-backed bindings (third-party components)
- * import { useExpose, domBinding } from '@agent-orchestrator/shared/automation';
+ * import { useExpose, domBinding } from '@termcanvas/shared/automation';
  *
  * function ThirdPartyWrapper() {
  *   const ref = useRef<HTMLInputElement>(null);

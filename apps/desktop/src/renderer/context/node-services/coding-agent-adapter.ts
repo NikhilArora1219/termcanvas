@@ -12,7 +12,7 @@ import type {
   StreamingBlockType,
   StreamingChunk,
   StreamingContentBlock,
-} from '@agent-orchestrator/shared';
+} from '@termcanvas/shared';
 import type { AgentType } from '../../../../types/coding-agent-status';
 
 // ============================================

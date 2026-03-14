@@ -1,4 +1,4 @@
-import type { LlmChatMessage } from '@agent-orchestrator/shared';
+import type { LlmChatMessage } from '@termcanvas/shared';
 import type { VendorId } from './config.types';
 import type { ToolCall } from './tool.types';
 

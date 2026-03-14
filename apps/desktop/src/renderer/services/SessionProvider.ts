@@ -5,7 +5,7 @@
  * Uses file system lookups via the main process to find session files.
  */
 
-import type { AgentType } from '@agent-orchestrator/shared';
+import type { AgentType } from '@termcanvas/shared';
 import type { CodingAgentType } from '../../main/services/coding-agent';
 
 /**

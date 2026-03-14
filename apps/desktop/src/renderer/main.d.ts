@@ -16,7 +16,7 @@ export type {
   ShellAPI,
   WorktreeAPI,
   AgentStatusAPI,
-} from '@agent-orchestrator/shared';
+} from '@termcanvas/shared';
 
 // Desktop-specific CanvasAPI that uses concrete types from database module
 // (Shared package uses Record<string, unknown> for flexibility)
@@ -30,12 +30,7 @@ export interface CanvasAPI {
 }
 
 // Import types for Window interface declaration
-import type {
-  ElectronAPI,
-  ShellAPI,
-  WorktreeAPI,
-  AgentStatusAPI,
-} from '@agent-orchestrator/shared';
+import type { ElectronAPI, ShellAPI, WorktreeAPI, AgentStatusAPI } from '@termcanvas/shared';
 
 declare global {
   interface Window {

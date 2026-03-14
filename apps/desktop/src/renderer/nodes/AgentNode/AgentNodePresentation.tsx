@@ -5,7 +5,7 @@
  * Handles UI rendering, status display, and user interactions.
  */
 
-import { useExpose } from '@agent-orchestrator/shared';
+import { useExpose } from '@termcanvas/shared';
 import { Handle, NodeResizer, Position } from '@xyflow/react';
 import type React from 'react';
 import { useCallback, useEffect, useRef, useState } from 'react';

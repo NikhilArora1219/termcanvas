@@ -5,7 +5,7 @@
  * Manages session data loading with proper lifecycle.
  */
 
-import type { CodingAgentMessage } from '@agent-orchestrator/shared';
+import type { CodingAgentMessage } from '@termcanvas/shared';
 import type { CodingAgentAPI, CodingAgentType } from '../../../main/services/coding-agent';
 import type {
   ErrorListener,

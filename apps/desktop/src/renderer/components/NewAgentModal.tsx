@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import './NewAgentModal.css';
-import type { GitInfo } from '@agent-orchestrator/shared';
+import type { GitInfo } from '@termcanvas/shared';
 import type { MessagePreview } from '../hooks';
 import { useBranchSearch } from '../hooks/useBranchSearch';
 import { useWorktreeConfigState } from '../hooks/useWorktreeConfigState';

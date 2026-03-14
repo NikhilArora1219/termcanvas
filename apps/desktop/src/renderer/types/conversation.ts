@@ -1,7 +1,7 @@
 /**
  * Conversation Type Definitions
  *
- * Re-exports conversation types from @agent-orchestrator/shared.
+ * Re-exports conversation types from @termcanvas/shared.
  * This file is kept for backwards compatibility with existing imports.
  */
 
@@ -24,7 +24,7 @@ export type {
   UserMessageEntry,
   // Group types
   UserMessageGroup,
-} from '@agent-orchestrator/shared';
+} from '@termcanvas/shared';
 
 export {
   isAssistantMessageEntry,
@@ -36,4 +36,4 @@ export {
   isToolUseContent,
   // Type guards
   isUserMessageEntry,
-} from '@agent-orchestrator/shared';
+} from '@termcanvas/shared';

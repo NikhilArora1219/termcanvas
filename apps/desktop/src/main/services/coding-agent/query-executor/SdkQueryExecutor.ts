@@ -5,7 +5,6 @@
  * Maps SDK types to our internal types, isolating SDK-specific code.
  */
 
-import type { StreamingChunk } from '@agent-orchestrator/shared';
 import type {
   CanUseTool,
   Options,
@@ -15,6 +14,7 @@ import type {
   SDKResultMessage,
 } from '@anthropic-ai/claude-agent-sdk';
 import { query } from '@anthropic-ai/claude-agent-sdk';
+import type { StreamingChunk } from '@termcanvas/shared';
 import type {
   QueryAssistantMessage,
   QueryExecutor,

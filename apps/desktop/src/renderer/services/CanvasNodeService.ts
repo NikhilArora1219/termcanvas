@@ -6,7 +6,7 @@
  * and separation of concerns.
  */
 
-import type { GitInfo, TerminalAttachment } from '@agent-orchestrator/shared';
+import type { GitInfo, TerminalAttachment } from '@termcanvas/shared';
 import type { Node } from '@xyflow/react';
 import { type AgentNodeData, type AgentTitle, createDefaultAgentTitle } from '../types/agent-node';
 

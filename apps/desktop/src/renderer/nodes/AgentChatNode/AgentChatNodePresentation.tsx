@@ -10,7 +10,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useAgentService } from '../../context';
 import { useChatMessages } from '../../hooks/useChatMessages';
 import './AgentChatNode.css';
-import type { CodingAgentMessage } from '@agent-orchestrator/shared';
+import type { CodingAgentMessage } from '@termcanvas/shared';
 
 interface AgentChatNodePresentationProps {
   selected?: boolean;

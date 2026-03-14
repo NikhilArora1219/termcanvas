@@ -7,7 +7,7 @@ export type {
   JsonlFilterOptions as FilterOptions,
   JsonlFilterResult as FilterResult,
   JsonlMessageMetadata as MessageMetadata,
-} from '@agent-orchestrator/shared';
+} from '@termcanvas/shared';
 
 /**
  * Internal: Parsed JSONL line with fields relevant for filtering

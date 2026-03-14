@@ -10,7 +10,7 @@ import type {
   ClarifyingQuestionAction,
   ToolApprovalAction,
   ToolApprovalDecision,
-} from '@agent-orchestrator/shared';
+} from '@termcanvas/shared';
 import type { PillAnimationState } from './store';
 
 const DEFAULT_LABEL = 'Actions pending';

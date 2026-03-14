@@ -13,7 +13,7 @@ import type {
   ClarifyingQuestionAction,
   ToolApprovalAction,
   ToolApprovalDecision,
-} from '@agent-orchestrator/shared';
+} from '@termcanvas/shared';
 import { useActionPillStore } from '../store';
 import type { IActionPillService } from './IActionPillService';
 

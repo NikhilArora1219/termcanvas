@@ -15,7 +15,7 @@ import type {
   AgentEvent,
   AgentType,
   PermissionMode,
-} from '@agent-orchestrator/shared';
+} from '@termcanvas/shared';
 
 // ============================================
 // Agent Types
@@ -74,14 +74,10 @@ export const DEFAULT_AGENT_CONFIG = {
 // ============================================
 
 // Re-export session change type from shared
-export type { SessionChange } from '@agent-orchestrator/shared';
+export type { SessionChange } from '@termcanvas/shared';
 
 // Import CodingAgentMessage and MessageType for use in interfaces below
-import type {
-  CodingAgentMessage,
-  JsonlFilterOptions,
-  MessageType,
-} from '@agent-orchestrator/shared';
+import type { CodingAgentMessage, JsonlFilterOptions, MessageType } from '@termcanvas/shared';
 
 /**
  * Filter options for messages within a session
@@ -219,7 +215,7 @@ export interface ContinueOptions {
 // ============================================
 
 // Import StreamingChunk for use in StructuredStreamCallback definition
-import type { StreamingChunk as _StreamingChunk } from '@agent-orchestrator/shared';
+import type { StreamingChunk as _StreamingChunk } from '@termcanvas/shared';
 
 // Re-export rich message types from shared package
 export type {
@@ -244,7 +240,7 @@ export type {
   ThinkingInfo,
   ToolCategory,
   ToolInfo,
-} from '@agent-orchestrator/shared';
+} from '@termcanvas/shared';
 
 /**
  * Request to generate a response
@@ -466,4 +462,4 @@ export interface CodingAgentAPI {
 }
 
 // Re-export types needed for IPC
-export type { AgentActionResponse, AgentEvent } from '@agent-orchestrator/shared';
+export type { AgentActionResponse, AgentEvent } from '@termcanvas/shared';

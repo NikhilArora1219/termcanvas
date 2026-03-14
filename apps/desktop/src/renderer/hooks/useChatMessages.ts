@@ -16,7 +16,7 @@ import type {
   CodingAgentType,
   StreamingChunk,
   StreamingContentBlock,
-} from '@agent-orchestrator/shared';
+} from '@termcanvas/shared';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { IAgentService } from '../context/node-services';
 import { useSessionFileWatcher } from './useSessionFileWatcher';

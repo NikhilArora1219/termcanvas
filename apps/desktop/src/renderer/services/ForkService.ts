@@ -10,7 +10,7 @@
  * types used by the renderer layer.
  */
 
-import type { AgentType, JsonlFilterOptions } from '@agent-orchestrator/shared';
+import type { AgentType, JsonlFilterOptions } from '@termcanvas/shared';
 import type { CodingAgentType, ForkOptions, SessionInfo } from '../../main/services/coding-agent';
 import type { WorktreeInfo } from '../../main/types/worktree';
 import { sessionProvider } from './SessionProvider';

@@ -18,7 +18,7 @@ import type {
   TerminalSessionAPI,
   SessionWatcherAPI,
   RecentWorkspacesAPI,
-} from '@agent-orchestrator/shared';
+} from '@termcanvas/shared';
 import type { CodingAgentAPI } from '../main/services/coding-agent';
 
 // SVG module declarations moved to vite-env.d.ts

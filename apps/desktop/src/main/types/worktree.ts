@@ -1,7 +1,7 @@
 /**
  * Worktree Type Definitions
  *
- * Re-exports worktree types from @agent-orchestrator/shared.
+ * Re-exports worktree types from @termcanvas/shared.
  * This file is kept for backwards compatibility with existing imports.
  *
  * Note: WorktreeRow is kept local as it's a database-specific mapping.
@@ -13,9 +13,9 @@ export type {
   WorktreeProvisionOptions,
   WorktreeReleaseOptions,
   WorktreeStatus,
-} from '@agent-orchestrator/shared';
+} from '@termcanvas/shared';
 
-import type { WorktreeStatus } from '@agent-orchestrator/shared';
+import type { WorktreeStatus } from '@termcanvas/shared';
 
 /**
  * Database row representation of a worktree.
