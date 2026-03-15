@@ -303,8 +303,11 @@ function TerminalNode({ data, id, selected }: NodeProps) {
     wrapper.addEventListener('select', handleSelect);
     document.addEventListener('selectionchange', handleSelectionChange);
 
-    // Create terminal instance
+    // Create terminal instance with initial cols/rows to prevent
+    // xterm "dimensions" error when container hasn't been measured yet
     const terminal = new Terminal({
+      cols: 80,
+      rows: 24,
       theme: {
         background: '#2a2c36',
         foreground: '#d4d4d4',
