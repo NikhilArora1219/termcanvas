@@ -1,0 +1,70 @@
+.header-bar {
+  height: 40px;
+  background: var(--color-bg-primary);
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px 0 80px;
+  -webkit-app-region: drag;
+  flex-shrink: 0;
+  z-index: 100;
+}
+
+.header-bar-left {
+  display: flex;
+  align-items: center;
+  -webkit-app-region: no-drag;
+}
+
+.header-bar-brand {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  letter-spacing: 0.5px;
+}
+
+.header-bar-center {
+  display: flex;
+  gap: 2px;
+  background: var(--color-bg-secondary);
+  border-radius: 6px;
+  padding: 2px;
+  -webkit-app-region: no-drag;
+}
+
+.header-bar-tab {
+  padding: 4px 16px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  -webkit-app-region: no-drag;
+}
+
+.header-bar-tab:hover {
+  color: var(--color-text-primary);
+}
+
+.header-bar-tab.active {
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.header-bar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  -webkit-app-region: no-drag;
+}
+
+.header-bar-stat {
+  font-size: 11px;
+  color: var(--color-text-secondary);
+  font-family: "SF Mono", "Menlo", monospace;
+}

@@ -1,0 +1,44 @@
+.entity-legend {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  background: var(--color-bg-primary);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 10px 14px;
+  z-index: 5;
+  pointer-events: auto;
+}
+
+.entity-legend-title {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: var(--color-text-secondary);
+  margin-bottom: 8px;
+  font-family: "SF Mono", "Menlo", monospace;
+}
+
+.entity-legend-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+}
+
+.entity-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.entity-legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.entity-legend-label {
+  font-size: 11px;
+  color: var(--color-text-secondary);
+}

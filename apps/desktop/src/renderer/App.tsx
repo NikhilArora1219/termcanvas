@@ -1,5 +1,6 @@
 import { useEffect, useMemo } from 'react';
 import Canvas from './Canvas';
+import { SplitLayout } from './components/SplitLayout';
 import { TitleBar } from './components/TitleBar';
 import { NodeServicesRegistryProvider, ThemeProvider } from './context';
 import { createServiceFactories, sharedEventDispatcher } from './services';
@@ -21,11 +22,10 @@ function App() {
         <div className="app">
           <TitleBar />
           <div className="app-content">
-            <div className="app-sidebar app-sidebar-left" />
-            <Canvas />
-            <div className="app-sidebar app-sidebar-right" />
+            <SplitLayout>
+              <Canvas />
+            </SplitLayout>
           </div>
-          <div className="app-bottom-bar" />
         </div>
       </NodeServicesRegistryProvider>
     </ThemeProvider>

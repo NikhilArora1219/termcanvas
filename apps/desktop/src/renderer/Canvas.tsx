@@ -30,6 +30,7 @@ import { createDefaultAgentTitle, useExpose } from '@termcanvas/shared';
 import AssistantMessageNode from './components/AssistantMessageNode';
 import { type CommandAction, CommandPalette } from './components/CommandPalette';
 import ConversationNode from './components/ConversationNode';
+import { EntityLegend } from './components/EntityLegend';
 import { NewAgentModal } from './components/NewAgentModal';
 import UserMessageNode from './components/UserMessageNode';
 import { useTheme } from './context';
@@ -77,6 +78,7 @@ import {
 import { nodeRegistry } from './nodes/registry';
 import { forkService, worktreeService } from './services';
 import { forkStore, nodeStore, permissionModeStore } from './stores';
+import { useViewModeStore } from './stores/ViewModeStore';
 import { createLinearIssueAttachment } from './types/attachments';
 import { getOptimalHandles, updateEdgesWithOptimalHandles } from './utils/edgeHandles';
 
@@ -158,6 +160,15 @@ function CanvasFlow() {
   const [edges, setEdges, onEdgesChange] = useEdgesState(
     initialEdges.length > 0 ? initialEdges : defaultEdges
   );
+
+  // =============================================================================
+  // Track terminal count in ViewModeStore
+  // =============================================================================
+  const setTerminalCount = useViewModeStore((s) => s.setTerminalCount);
+  useEffect(() => {
+    const count = nodes.filter((n) => n.type === 'terminal' || n.type === 'agent').length;
+    setTerminalCount(count);
+  }, [nodes.length, setTerminalCount]);
 
   // =============================================================================
   // Node Operations (declarative methods replacing setNodes)
@@ -1352,6 +1363,11 @@ function CanvasFlow() {
 
           {/* Zoom Controls */}
           <ZoomControls onZoomIn={zoomIn} onZoomOut={zoomOut} />
+
+          {/* Entity Type Legend */}
+          <EntityLegend
+            nodeTypes={Array.from(new Set(nodes.map((n) => n.type).filter(Boolean) as string[]))}
+          />
 
           {/* Settings Modal */}
           <SettingsModal

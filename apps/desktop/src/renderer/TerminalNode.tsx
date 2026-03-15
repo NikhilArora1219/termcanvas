@@ -7,8 +7,10 @@ import { useEffect, useRef, useState } from 'react';
 import '@xterm/xterm/css/xterm.css';
 import './TerminalNode.css';
 import AttachmentHeader from './AttachmentHeader';
+import { getNodeTypeColor } from './components/EntityLegend';
 import { useNodeActions } from './features/canvas/context';
 import IssueDetailsModal from './IssueDetailsModal';
+import { useViewModeStore } from './stores/ViewModeStore';
 import {
   createLinearIssueAttachment,
   isLinearIssueAttachment,
@@ -643,6 +645,7 @@ function TerminalNode({ data, id, selected }: NodeProps) {
         workspacePath: nodeData.workspacePath,
         autoStartClaude: nodeData.autoStartClaude,
       });
+      useViewModeStore.getState().addLog(`Terminal created: ${terminalId.slice(-8)}`, 'info');
       // Pass workspacePath to enable hook env injection for agent lifecycle events
       window.electronAPI.createTerminal(terminalId, nodeData.workspacePath);
 
@@ -702,6 +705,12 @@ function TerminalNode({ data, id, selected }: NodeProps) {
           // Don't show exit message if it exited immediately on startup (likely a configuration issue)
           // Exit code 1 with signal often indicates the shell couldn't start properly
           const isImmediateExit = code === 1 && signal === 1;
+          useViewModeStore
+            .getState()
+            .addLog(
+              `Terminal exited: ${terminalId.slice(-8)} (code ${code})`,
+              code === 0 ? 'info' : 'warn'
+            );
 
           if (!isImmediateExit) {
             terminal.write(
@@ -1040,10 +1049,40 @@ function TerminalNode({ data, id, selected }: NodeProps) {
 
       {/* Drag handle — this is the only area you can grab to move the node */}
       <div className="terminal-node-header" style={{ cursor: 'grab' }}>
-        <span className="terminal-node-title">
-          {nodeData.label || nodeData.command || 'Terminal'}
-        </span>
-        <span className="terminal-node-id">{terminalId.slice(-8)}</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <span
+            style={{
+              width: 8,
+              height: 8,
+              borderRadius: '50%',
+              background: getNodeTypeColor('terminal'),
+              flexShrink: 0,
+            }}
+          />
+          <span className="terminal-node-title">
+            {nodeData.label || nodeData.command || 'Terminal'}
+          </span>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              useViewModeStore.getState().selectTerminal(terminalId);
+            }}
+            title="Open in side panel"
+            style={{
+              background: 'transparent',
+              border: 'none',
+              color: '#4a9eff',
+              cursor: 'pointer',
+              fontSize: 11,
+              padding: '0 4px',
+            }}
+          >
+            {'[>]'}
+          </button>
+          <span className="terminal-node-id">{terminalId.slice(-8)}</span>
+        </div>
       </div>
 
       {/* Render all attachments */}

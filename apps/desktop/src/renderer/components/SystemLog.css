@@ -1,0 +1,83 @@
+.system-log {
+  background: #0a0a0a;
+  border-top: 1px solid var(--color-border);
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  transition: height 0.2s ease;
+}
+
+.system-log.collapsed {
+  height: 28px;
+}
+
+.system-log:not(.collapsed) {
+  height: 100px;
+}
+
+.system-log-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 12px;
+  cursor: pointer;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.system-log-title {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: #666;
+  font-family: "SF Mono", "Menlo", monospace;
+}
+
+.system-log-count {
+  font-size: 10px;
+  color: #444;
+  font-family: "SF Mono", "Menlo", monospace;
+  flex: 1;
+}
+
+.system-log-toggle {
+  font-size: 12px;
+  color: #666;
+  font-family: "SF Mono", "Menlo", monospace;
+}
+
+.system-log-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 12px 4px;
+  font-family: "SF Mono", "Menlo", "Monaco", monospace;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.system-log-empty {
+  color: #444;
+  font-style: italic;
+}
+
+.system-log-entry {
+  display: flex;
+  gap: 8px;
+}
+
+.system-log-ts {
+  color: #555;
+  flex-shrink: 0;
+}
+
+.system-log-msg {
+  color: #aaa;
+}
+
+.system-log-entry.level-warn .system-log-msg {
+  color: #f5c348;
+}
+
+.system-log-entry.level-error .system-log-msg {
+  color: #ff6b6b;
+}
