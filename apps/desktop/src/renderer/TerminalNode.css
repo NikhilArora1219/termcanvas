@@ -119,28 +119,13 @@
 .terminal-node-content {
   flex: 1;
   padding: 0;
-  min-height: 250px;
+  min-height: 200px;
   /* Prevent text selection on the wrapper and all children by default */
   user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   overflow: hidden;
-  /* Ensure xterm fills the container */
-  position: relative;
-}
-
-/* Make xterm fill the terminal content area */
-.terminal-node-content .xterm {
-  height: 100% !important;
-}
-
-.terminal-node-content .xterm-viewport {
-  overflow-y: auto !important;
-}
-
-.terminal-node-content .xterm-screen {
-  height: 100% !important;
 }
 
 /* When terminal is not active, dim it slightly to indicate it's not interactive */

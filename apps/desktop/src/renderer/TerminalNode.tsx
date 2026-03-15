@@ -21,6 +21,12 @@ interface TerminalNodeData {
   workspacePath?: string;
   attachments?: TerminalAttachment[];
   autoStartClaude?: boolean; // Flag to auto-start claude command
+  /** Custom command to run in the terminal */
+  command?: string;
+  /** Display label for the terminal node header */
+  label?: string;
+  /** Working directory override */
+  cwd?: string;
   // Legacy support - will be migrated to attachments array
   issue?: {
     id?: string;
@@ -1018,6 +1024,14 @@ function TerminalNode({ data, id, selected }: NodeProps) {
         }}
       />
 
+      {/* Drag handle — this is the only area you can grab to move the node */}
+      <div className="terminal-node-header" style={{ cursor: 'grab' }}>
+        <span className="terminal-node-title">
+          {nodeData.label || nodeData.command || 'Terminal'}
+        </span>
+        <span className="terminal-node-id">{terminalId.slice(-8)}</span>
+      </div>
+
       {/* Render all attachments */}
       {attachments.map((attachment, index) => (
         <AttachmentHeader
@@ -1033,7 +1047,7 @@ function TerminalNode({ data, id, selected }: NodeProps) {
 
       <div
         ref={terminalRef}
-        className={`terminal-node-content nodrag ${selected ? 'active' : ''}`}
+        className={`terminal-node-content nodrag nowheel ${selected ? 'active' : ''}`}
         onClick={() => terminalInstanceRef.current?.focus()}
       />
 
