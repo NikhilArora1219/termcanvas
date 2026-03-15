@@ -792,6 +792,64 @@ contextBridge.exposeInMainWorld('sessionSummaryCacheAPI', {
   },
 } as SessionSummaryCacheAPI);
 
+// Type definitions for the navigator API
+export interface DirEntry {
+  name: string;
+  path: string;
+  isDirectory: boolean;
+  size: number;
+  modifiedAt: string;
+  extension: string;
+}
+
+export interface NavigatorFileInfo {
+  name: string;
+  path: string;
+  isDirectory: boolean;
+  size: number;
+  modifiedAt: string;
+  createdAt: string;
+  extension: string;
+}
+
+export interface NavigatorAPI {
+  readDirectory: (dirPath: string) => Promise<DirEntry[]>;
+  readFile: (filePath: string) => Promise<string>;
+  writeFile: (filePath: string, content: string) => Promise<void>;
+  getFileInfo: (filePath: string) => Promise<NavigatorFileInfo>;
+  createDirectory: (dirPath: string) => Promise<void>;
+  renameFile: (oldPath: string, newPath: string) => Promise<void>;
+  deleteFile: (filePath: string) => Promise<void>;
+  openDirectoryDialog: () => Promise<string | null>;
+}
+
+// Expose navigator API for file tree sidebar
+contextBridge.exposeInMainWorld('navigatorAPI', {
+  readDirectory: (dirPath: string) => unwrapResponse(ipcRenderer.invoke('fs:readdir', dirPath)),
+  readFile: (filePath: string) =>
+    unwrapResponse<string>(ipcRenderer.invoke('fs:read-file', filePath)),
+  writeFile: async (filePath: string, content: string) => {
+    await unwrapResponse(ipcRenderer.invoke('fs:write-file', filePath, content));
+  },
+  getFileInfo: (filePath: string) => unwrapResponse(ipcRenderer.invoke('fs:file-info', filePath)),
+  createDirectory: async (dirPath: string) => {
+    await unwrapResponse(ipcRenderer.invoke('fs:mkdir', dirPath));
+  },
+  renameFile: async (oldPath: string, newPath: string) => {
+    await unwrapResponse(ipcRenderer.invoke('fs:rename', oldPath, newPath));
+  },
+  deleteFile: async (filePath: string) => {
+    await unwrapResponse(ipcRenderer.invoke('fs:delete', filePath));
+  },
+  openDirectoryDialog: async () => {
+    const result = await ipcRenderer.invoke('dialog:open-directory');
+    if (result.success) {
+      return result.path;
+    }
+    return null;
+  },
+} as NavigatorAPI);
+
 // Expose recent workspaces API for tracking recently opened workspace paths
 contextBridge.exposeInMainWorld('recentWorkspacesAPI', {
   addWorkspace: async (workspacePath: string, options?: AddWorkspaceOptions) => {

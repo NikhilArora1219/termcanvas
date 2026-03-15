@@ -13,6 +13,7 @@ import type {
   GitAPI,
   ShellAPI,
   SessionSummaryCacheAPI,
+  NavigatorAPI,
 } from '../main/preload';
 import type {
   TerminalSessionAPI,
@@ -38,5 +39,6 @@ declare global {
     sessionWatcherAPI?: SessionWatcherAPI;
     recentWorkspacesAPI?: RecentWorkspacesAPI;
     sessionSummaryCacheAPI?: SessionSummaryCacheAPI;
+    navigatorAPI?: NavigatorAPI;
   }
 }

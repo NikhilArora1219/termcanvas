@@ -28,7 +28,7 @@ export function CodeNode({ id, data, selected }: NodeProps) {
 
   const handleSave = useCallback(() => {
     if (nodeData.filePath) {
-      window.electron?.ipcRenderer.invoke('fs:write-file', nodeData.filePath, content);
+      window.navigatorAPI?.writeFile(nodeData.filePath, content);
     }
   }, [nodeData.filePath, content]);
 

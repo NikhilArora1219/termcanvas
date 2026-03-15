@@ -1,35 +1,35 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-vi.stubGlobal('window', {
-  electron: {
-    ipcRenderer: {
-      invoke: vi.fn(),
-    },
-  },
-});
+const mockNavigatorAPI = {
+  readDirectory: vi.fn(),
+  readFile: vi.fn(),
+  writeFile: vi.fn(),
+  getFileInfo: vi.fn(),
+  createDirectory: vi.fn(),
+  renameFile: vi.fn(),
+  deleteFile: vi.fn(),
+  openDirectoryDialog: vi.fn(),
+};
 
-/**
- * Helper to mock IPC by channel name.
- * setRootPath calls both 'fs:readdir' and 'recent-workspaces:upsert',
- * so sequential mockResolvedValueOnce is unreliable.
- */
-function mockIpc(responses: Record<string, any[]>) {
-  const counters: Record<string, number> = {};
-  vi.mocked(window.electron!.ipcRenderer.invoke).mockImplementation(
-    async (channel: string, ..._args: any[]) => {
-      if (!responses[channel]) return { success: true };
-      counters[channel] = counters[channel] ?? 0;
-      const result = responses[channel][counters[channel]] ?? { success: true };
-      counters[channel]++;
-      return result;
-    }
-  );
-}
+const mockRecentWorkspacesAPI = {
+  addWorkspace: vi.fn(),
+  getRecentWorkspaces: vi.fn().mockResolvedValue([]),
+  removeWorkspace: vi.fn(),
+  clearAll: vi.fn(),
+  hasWorkspace: vi.fn(),
+};
+
+vi.stubGlobal('window', {
+  navigatorAPI: mockNavigatorAPI,
+  recentWorkspacesAPI: mockRecentWorkspacesAPI,
+});
 
 describe('navigatorStore', () => {
   beforeEach(() => {
     vi.resetModules();
-    vi.mocked(window.electron!.ipcRenderer.invoke).mockReset();
+    vi.mocked(mockNavigatorAPI.readDirectory).mockReset();
+    vi.mocked(mockRecentWorkspacesAPI.addWorkspace).mockReset();
+    vi.mocked(mockRecentWorkspacesAPI.getRecentWorkspaces).mockReset().mockResolvedValue([]);
   });
 
   it('should initialize with no root path', async () => {
@@ -41,31 +41,24 @@ describe('navigatorStore', () => {
   });
 
   it('should load directory entries when setRootPath is called', async () => {
-    mockIpc({
-      'fs:readdir': [
-        {
-          success: true,
-          entries: [
-            {
-              name: 'src',
-              path: '/project/src',
-              isDirectory: true,
-              size: 0,
-              modifiedAt: '2026-01-01',
-              extension: '',
-            },
-            {
-              name: 'README.md',
-              path: '/project/README.md',
-              isDirectory: false,
-              size: 100,
-              modifiedAt: '2026-01-01',
-              extension: '.md',
-            },
-          ],
-        },
-      ],
-    });
+    mockNavigatorAPI.readDirectory.mockResolvedValueOnce([
+      {
+        name: 'src',
+        path: '/project/src',
+        isDirectory: true,
+        size: 0,
+        modifiedAt: '2026-01-01',
+        extension: '',
+      },
+      {
+        name: 'README.md',
+        path: '/project/README.md',
+        isDirectory: false,
+        size: 100,
+        modifiedAt: '2026-01-01',
+        extension: '.md',
+      },
+    ]);
 
     const { useNavigatorStore } = await import('../store/navigatorStore');
     await useNavigatorStore.getState().setRootPath('/project');
@@ -77,36 +70,27 @@ describe('navigatorStore', () => {
   });
 
   it('should expand a directory', async () => {
-    mockIpc({
-      'fs:readdir': [
+    mockNavigatorAPI.readDirectory
+      .mockResolvedValueOnce([
         {
-          success: true,
-          entries: [
-            {
-              name: 'src',
-              path: '/project/src',
-              isDirectory: true,
-              size: 0,
-              modifiedAt: '2026-01-01',
-              extension: '',
-            },
-          ],
+          name: 'src',
+          path: '/project/src',
+          isDirectory: true,
+          size: 0,
+          modifiedAt: '2026-01-01',
+          extension: '',
         },
+      ])
+      .mockResolvedValueOnce([
         {
-          success: true,
-          entries: [
-            {
-              name: 'index.ts',
-              path: '/project/src/index.ts',
-              isDirectory: false,
-              size: 50,
-              modifiedAt: '2026-01-01',
-              extension: '.ts',
-            },
-          ],
+          name: 'index.ts',
+          path: '/project/src/index.ts',
+          isDirectory: false,
+          size: 50,
+          modifiedAt: '2026-01-01',
+          extension: '.ts',
         },
-      ],
-    });
+      ]);
 
     const { useNavigatorStore } = await import('../store/navigatorStore');
     await useNavigatorStore.getState().setRootPath('/project');
@@ -119,27 +103,18 @@ describe('navigatorStore', () => {
   });
 
   it('should collapse a directory', async () => {
-    mockIpc({
-      'fs:readdir': [
+    mockNavigatorAPI.readDirectory
+      .mockResolvedValueOnce([
         {
-          success: true,
-          entries: [
-            {
-              name: 'src',
-              path: '/project/src',
-              isDirectory: true,
-              size: 0,
-              modifiedAt: '2026-01-01',
-              extension: '',
-            },
-          ],
+          name: 'src',
+          path: '/project/src',
+          isDirectory: true,
+          size: 0,
+          modifiedAt: '2026-01-01',
+          extension: '',
         },
-        {
-          success: true,
-          entries: [],
-        },
-      ],
-    });
+      ])
+      .mockResolvedValueOnce([]);
 
     const { useNavigatorStore } = await import('../store/navigatorStore');
     await useNavigatorStore.getState().setRootPath('/project');
@@ -151,23 +126,16 @@ describe('navigatorStore', () => {
   });
 
   it('should set search query', async () => {
-    mockIpc({
-      'fs:readdir': [
-        {
-          success: true,
-          entries: [
-            {
-              name: 'index.ts',
-              path: '/project/index.ts',
-              isDirectory: false,
-              size: 50,
-              modifiedAt: '2026-01-01',
-              extension: '.ts',
-            },
-          ],
-        },
-      ],
-    });
+    mockNavigatorAPI.readDirectory.mockResolvedValueOnce([
+      {
+        name: 'index.ts',
+        path: '/project/index.ts',
+        isDirectory: false,
+        size: 50,
+        modifiedAt: '2026-01-01',
+        extension: '.ts',
+      },
+    ]);
 
     const { useNavigatorStore } = await import('../store/navigatorStore');
     await useNavigatorStore.getState().setRootPath('/project');

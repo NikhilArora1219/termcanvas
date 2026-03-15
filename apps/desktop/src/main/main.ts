@@ -753,11 +753,15 @@ function registerIpcHandlers(): void {
   // =========================================================================
 
   ipcMain.handle('fs:readdir', async (_event, dirPath: string) => {
-    return readDirectory(dirPath);
+    const result = await readDirectory(dirPath);
+    if (!result.success) return { success: false, error: result.error };
+    return { success: true, data: result.entries };
   });
 
   ipcMain.handle('fs:read-file', async (_event, filePath: string) => {
-    return readFileContent(filePath);
+    const result = await readFileContent(filePath);
+    if (!result.success) return { success: false, error: result.error };
+    return { success: true, data: result.content };
   });
 
   ipcMain.handle('fs:write-file', async (_event, filePath: string, content: string) => {
@@ -765,7 +769,9 @@ function registerIpcHandlers(): void {
   });
 
   ipcMain.handle('fs:file-info', async (_event, filePath: string) => {
-    return getFileInfo(filePath);
+    const result = await getFileInfo(filePath);
+    if (!result.success) return { success: false, error: result.error };
+    return { success: true, data: result.info };
   });
 
   ipcMain.handle('fs:mkdir', async (_event, dirPath: string) => {
@@ -794,7 +800,12 @@ function registerIpcHandlers(): void {
     'recent-workspaces:upsert',
     async (_event, workspace: { path: string; name: string }) => {
       try {
-        await database.upsertRecentWorkspace(workspace);
+        const now = Date.now();
+        await database.upsertRecentWorkspace({
+          ...workspace,
+          lastOpenedAt: now,
+          createdAt: now,
+        });
         return { success: true };
       } catch (error: any) {
         return { success: false, error: error.message };

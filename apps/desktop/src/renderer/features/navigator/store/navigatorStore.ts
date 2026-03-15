@@ -32,11 +32,10 @@ interface NavigatorState {
 }
 
 async function loadDirectory(dirPath: string): Promise<FileEntry[]> {
-  const result = await window.electron!.ipcRenderer.invoke('fs:readdir', dirPath);
-  if (!result.success) {
-    throw new Error(result.error || 'Failed to read directory');
+  if (!window.navigatorAPI) {
+    throw new Error('Navigator API not available');
   }
-  return result.entries;
+  return window.navigatorAPI.readDirectory(dirPath);
 }
 
 export const useNavigatorStore = create<NavigatorState>((set, get) => ({
@@ -66,7 +65,7 @@ export const useNavigatorStore = create<NavigatorState>((set, get) => ({
       });
       // Save as recent workspace
       const name = path.split('/').pop() || path;
-      window.electron?.ipcRenderer.invoke('recent-workspaces:upsert', { path, name });
+      window.recentWorkspacesAPI?.addWorkspace(path, { name });
     } catch (error: any) {
       set({ error: error.message, isLoading: false });
     }
@@ -110,9 +109,18 @@ export const useNavigatorStore = create<NavigatorState>((set, get) => ({
   },
 
   loadRecentWorkspaces: async () => {
-    const result = await window.electron!.ipcRenderer.invoke('recent-workspaces:get', 10);
-    if (result?.success) {
-      set({ recentWorkspaces: result.data.map((w: any) => ({ path: w.path, name: w.name })) });
+    try {
+      const workspaces = await window.recentWorkspacesAPI?.getRecentWorkspaces(10);
+      if (workspaces) {
+        set({
+          recentWorkspaces: workspaces.map((w) => ({
+            path: w.path,
+            name: w.name,
+          })),
+        });
+      }
+    } catch (error) {
+      console.error('[Navigator] Failed to load recent workspaces:', error);
     }
   },
 }));

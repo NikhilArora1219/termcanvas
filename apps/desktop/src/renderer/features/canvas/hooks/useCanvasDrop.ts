@@ -137,8 +137,8 @@ export function useCanvasDrop(options: UseCanvasDropOptions): UseCanvasDropRetur
             if (imageExts.includes(entry.extension.toLowerCase())) {
               onFileDropped(entry.path, '', position);
             } else {
-              const result = await window.electron?.ipcRenderer.invoke('fs:read-file', entry.path);
-              const content = result?.success ? result.content : '';
+              const result = await window.navigatorAPI?.readFile(entry.path).catch(() => '');
+              const content = (typeof result === 'string' ? result : '') || '';
               onFileDropped(entry.path, content, position);
             }
             return;

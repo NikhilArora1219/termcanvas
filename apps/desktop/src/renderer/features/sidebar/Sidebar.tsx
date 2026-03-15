@@ -66,9 +66,9 @@ export function Sidebar({
   const [activeTab, setActiveTab] = useState<'files' | 'agents'>('files');
 
   const handleOpenDirectory = async () => {
-    const result = await window.electron?.ipcRenderer.invoke('dialog:open-directory');
-    if (result?.success && result.path) {
-      useNavigatorStore.getState().setRootPath(result.path);
+    const path = await window.navigatorAPI?.openDirectoryDialog();
+    if (path) {
+      useNavigatorStore.getState().setRootPath(path);
     }
   };
 

@@ -32,7 +32,7 @@ export function NoteNode({ id, data, selected }: NodeProps) {
     setIsEditing(false);
     updateNodeData(id, { content, isEditing: false });
     if (nodeData.filePath) {
-      window.electron?.ipcRenderer.invoke('fs:write-file', nodeData.filePath, content);
+      window.navigatorAPI?.writeFile(nodeData.filePath, content);
     }
   }, [id, content, nodeData.filePath, updateNodeData]);
 
