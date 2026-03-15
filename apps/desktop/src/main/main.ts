@@ -281,137 +281,158 @@ const createWindow = (): void => {
 
   // Create a new terminal instance
   // workspacePath is optional - if provided, hooks env vars are injected and terminal starts in that directory
-  ipcMain.on('terminal-create', (_event, terminalId: string, workspacePath?: string) => {
-    const callTime = Date.now();
-    const lastCreationTime = terminalCreationTimes.get(terminalId);
-    const timeSinceLastCreation = lastCreationTime ? callTime - lastCreationTime : null;
+  // command is optional - if provided, runs that command instead of the default shell
+  // cwd is optional - overrides workspacePath for the working directory
+  ipcMain.on(
+    'terminal-create',
+    (_event, terminalId: string, workspacePath?: string, command?: string, cwd?: string) => {
+      const callTime = Date.now();
+      const lastCreationTime = terminalCreationTimes.get(terminalId);
+      const timeSinceLastCreation = lastCreationTime ? callTime - lastCreationTime : null;
 
-    console.log('[Main] terminal-create IPC received', {
-      terminalId,
-      workspacePath,
-      timeSinceLastCreation: timeSinceLastCreation ? `${timeSinceLastCreation}ms` : 'never',
-      existingInMap: terminalProcesses.has(terminalId),
-      beingCreated: terminalsBeingCreated.has(terminalId),
-      stackTrace: new Error().stack?.split('\n').slice(2, 5).join('\n'),
-    });
-
-    // If terminal already exists, skip creation (prevent duplicates)
-    const existingProcess = terminalProcesses.get(terminalId);
-    if (existingProcess) {
-      console.log('[Main] ⚠️ Terminal already exists, skipping duplicate creation', { terminalId });
-      return;
-    }
-
-    // If terminal is currently being created, skip to prevent race conditions
-    if (terminalsBeingCreated.has(terminalId)) {
-      console.log('[Main] ⚠️ Terminal is already being created, skipping duplicate request', {
-        terminalId,
-      });
-      return;
-    }
-
-    // Mark as being created immediately to prevent race conditions
-    terminalsBeingCreated.add(terminalId);
-    terminalCreationTimes.set(terminalId, callTime);
-
-    const shell = process.platform === 'win32' ? 'cmd.exe' : process.env.SHELL || '/bin/bash';
-    // Use login shell (-l) to ensure user's PATH is loaded from shell profile
-    // This is needed for commands like 'claude' that are installed in user-specific locations
-    const shellArgs: string[] = process.platform === 'win32' ? [] : ['-l'];
-
-    // Build environment variables
-    // If workspacePath is provided, inject agent hooks env vars for lifecycle notifications
-    let hookEnv: Record<string, string> = {};
-
-    if (workspacePath && agentHooksService) {
-      hookEnv = agentHooksService.getTerminalEnv({
+      console.log('[Main] terminal-create IPC received', {
         terminalId,
         workspacePath,
-        agentId: `agent-${terminalId}`,
-      });
-      console.log('[Main] Injecting hooks env vars', {
-        terminalId,
-        workspacePath,
-        hookEnvKeys: Object.keys(hookEnv),
+        timeSinceLastCreation: timeSinceLastCreation ? `${timeSinceLastCreation}ms` : 'never',
+        existingInMap: terminalProcesses.has(terminalId),
+        beingCreated: terminalsBeingCreated.has(terminalId),
+        stackTrace: new Error().stack?.split('\n').slice(2, 5).join('\n'),
       });
 
-      // Ensure workspace-level hooks are configured (.claude/settings.local.json)
-      // This runs async but should complete before user starts Claude
-      agentHooksService.ensureWorkspaceHooks(workspacePath).catch((error) => {
-        console.error('[Main] Failed to set up workspace hooks:', error);
-      });
-    }
-
-    const ptyProcess = pty.spawn(shell, shellArgs, {
-      name: 'xterm-256color',
-      cols: 80,
-      rows: 30,
-      cwd: workspacePath || process.env.HOME || process.cwd(),
-      env: {
-        ...process.env,
-        ...hookEnv,
-        TERM: 'xterm-256color',
-        COLORTERM: 'truecolor',
-        // Ensure shell runs in interactive mode via environment
-        PS1: process.env.PS1 || '$ ',
-        // For zsh, ensure it runs interactively
-        ...(shell.includes('zsh') ? { ZDOTDIR: process.env.HOME } : {}),
-      } as { [key: string]: string },
-    });
-
-    // Add to map immediately after creation to prevent duplicates
-    terminalProcesses.set(terminalId, ptyProcess);
-    // Remove from "being created" set
-    terminalsBeingCreated.delete(terminalId);
-
-    // Log terminal creation for debugging
-    console.log('[Main] ✅ Terminal created successfully', { terminalId, shell, shellArgs });
-
-    // Initialize buffer for this terminal
-    if (!terminalBuffers.has(terminalId)) {
-      terminalBuffers.set(terminalId, []);
-    }
-
-    // Handle shell data - send to renderer via IPC with terminal ID
-    ptyProcess.onData((data: string) => {
-      // Buffer the output for restoration after refresh
-      const buffer = terminalBuffers.get(terminalId);
-      if (buffer) {
-        // Split by newlines and add to buffer
-        const lines = data.split('\n');
-        buffer.push(...lines);
-        // Keep buffer within limit
-        while (buffer.length > TERMINAL_BUFFER_LINES) {
-          buffer.shift();
-        }
-      }
-
-      // Check if window is still valid before sending
-      if (!win.isDestroyed() && win.webContents && !win.webContents.isDestroyed()) {
-        win.webContents.send('terminal-data', { terminalId, data });
-      }
-    });
-
-    // Handle shell exit
-    ptyProcess.onExit((exitInfo: { exitCode: number; signal?: number }) => {
-      console.log('[Main] Terminal exited', { terminalId, exitInfo });
-      // Check if window is still valid before sending
-      if (!win.isDestroyed() && win.webContents && !win.webContents.isDestroyed()) {
-        win.webContents.send('terminal-exit', {
+      // If terminal already exists, skip creation (prevent duplicates)
+      const existingProcess = terminalProcesses.get(terminalId);
+      if (existingProcess) {
+        console.log('[Main] ⚠️ Terminal already exists, skipping duplicate creation', {
           terminalId,
-          code: exitInfo.exitCode,
-          signal: exitInfo.signal,
+        });
+        return;
+      }
+
+      // If terminal is currently being created, skip to prevent race conditions
+      if (terminalsBeingCreated.has(terminalId)) {
+        console.log('[Main] ⚠️ Terminal is already being created, skipping duplicate request', {
+          terminalId,
+        });
+        return;
+      }
+
+      // Mark as being created immediately to prevent race conditions
+      terminalsBeingCreated.add(terminalId);
+      terminalCreationTimes.set(terminalId, callTime);
+
+      // If a custom command is provided, run it via the shell with -l -c
+      // Otherwise use the default login shell
+      const defaultShell =
+        process.platform === 'win32' ? 'cmd.exe' : process.env.SHELL || '/bin/bash';
+      const shell = command ? defaultShell : defaultShell;
+      const shellArgs: string[] = command
+        ? process.platform === 'win32'
+          ? ['/c', command]
+          : ['-l', '-c', command]
+        : process.platform === 'win32'
+          ? []
+          : ['-l'];
+
+      // Build environment variables
+      // If workspacePath is provided, inject agent hooks env vars for lifecycle notifications
+      let hookEnv: Record<string, string> = {};
+
+      if (workspacePath && agentHooksService) {
+        hookEnv = agentHooksService.getTerminalEnv({
+          terminalId,
+          workspacePath,
+          agentId: `agent-${terminalId}`,
+        });
+        console.log('[Main] Injecting hooks env vars', {
+          terminalId,
+          workspacePath,
+          hookEnvKeys: Object.keys(hookEnv),
+        });
+
+        // Ensure workspace-level hooks are configured (.claude/settings.local.json)
+        // This runs async but should complete before user starts Claude
+        agentHooksService.ensureWorkspaceHooks(workspacePath).catch((error) => {
+          console.error('[Main] Failed to set up workspace hooks:', error);
         });
       }
-      // Remove from map when process exits so it can be recreated
-      terminalProcesses.delete(terminalId);
-      // Also remove from "being created" set if it's still there
+
+      const ptyProcess = pty.spawn(shell, shellArgs, {
+        name: 'xterm-256color',
+        cols: 80,
+        rows: 30,
+        cwd: cwd || workspacePath || process.env.HOME || process.cwd(),
+        env: {
+          ...process.env,
+          ...hookEnv,
+          TERM: 'xterm-256color',
+          COLORTERM: 'truecolor',
+          // Ensure shell runs in interactive mode via environment
+          PS1: process.env.PS1 || '$ ',
+          // For zsh, ensure it runs interactively
+          ...(shell.includes('zsh') ? { ZDOTDIR: process.env.HOME } : {}),
+        } as { [key: string]: string },
+      });
+
+      // Add to map immediately after creation to prevent duplicates
+      terminalProcesses.set(terminalId, ptyProcess);
+      // Remove from "being created" set
       terminalsBeingCreated.delete(terminalId);
-      // Clean up buffer and session state
-      terminalBuffers.delete(terminalId);
-      terminalSessionStates.delete(terminalId);
-    });
-  });
+
+      // Log terminal creation for debugging
+      console.log('[Main] ✅ Terminal created successfully', {
+        terminalId,
+        shell,
+        shellArgs,
+        command: command || 'default shell',
+        cwd: cwd || workspacePath || 'HOME',
+      });
+
+      // Initialize buffer for this terminal
+      if (!terminalBuffers.has(terminalId)) {
+        terminalBuffers.set(terminalId, []);
+      }
+
+      // Handle shell data - send to renderer via IPC with terminal ID
+      ptyProcess.onData((data: string) => {
+        // Buffer the output for restoration after refresh
+        const buffer = terminalBuffers.get(terminalId);
+        if (buffer) {
+          // Split by newlines and add to buffer
+          const lines = data.split('\n');
+          buffer.push(...lines);
+          // Keep buffer within limit
+          while (buffer.length > TERMINAL_BUFFER_LINES) {
+            buffer.shift();
+          }
+        }
+
+        // Check if window is still valid before sending
+        if (!win.isDestroyed() && win.webContents && !win.webContents.isDestroyed()) {
+          win.webContents.send('terminal-data', { terminalId, data });
+        }
+      });
+
+      // Handle shell exit
+      ptyProcess.onExit((exitInfo: { exitCode: number; signal?: number }) => {
+        console.log('[Main] Terminal exited', { terminalId, exitInfo });
+        // Check if window is still valid before sending
+        if (!win.isDestroyed() && win.webContents && !win.webContents.isDestroyed()) {
+          win.webContents.send('terminal-exit', {
+            terminalId,
+            code: exitInfo.exitCode,
+            signal: exitInfo.signal,
+          });
+        }
+        // Remove from map when process exits so it can be recreated
+        terminalProcesses.delete(terminalId);
+        // Also remove from "being created" set if it's still there
+        terminalsBeingCreated.delete(terminalId);
+        // Clean up buffer and session state
+        terminalBuffers.delete(terminalId);
+        terminalSessionStates.delete(terminalId);
+      });
+    }
+  );
 
   // Handle resize from renderer (throttled on renderer side, but log less frequently here too)
   const lastResizeLog: { [key: string]: { cols: number; rows: number; time: number } } = {};

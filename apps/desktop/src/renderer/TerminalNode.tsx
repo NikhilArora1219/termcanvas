@@ -647,7 +647,12 @@ function TerminalNode({ data, id, selected }: NodeProps) {
       });
       useViewModeStore.getState().addLog(`Terminal created: ${terminalId.slice(-8)}`, 'info');
       // Pass workspacePath to enable hook env injection for agent lifecycle events
-      window.electronAPI.createTerminal(terminalId, nodeData.workspacePath);
+      window.electronAPI.createTerminal(
+        terminalId,
+        nodeData.workspacePath,
+        nodeData.command,
+        nodeData.cwd
+      );
 
       // Auto-start claude command if flag is set
       if (nodeData.autoStartClaude) {
@@ -735,7 +740,12 @@ function TerminalNode({ data, id, selected }: NodeProps) {
               });
               setTimeout(() => {
                 terminalProcessCreatedRef.current = false;
-                window.electronAPI?.createTerminal(terminalId, nodeData.workspacePath);
+                window.electronAPI?.createTerminal(
+                  terminalId,
+                  nodeData.workspacePath,
+                  nodeData.command,
+                  nodeData.cwd
+                );
                 terminalProcessCreatedRef.current = true;
               }, delay);
             } else {

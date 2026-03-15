@@ -68,7 +68,12 @@ interface McpBridgeResponse {
 // Type definitions for the electron API
 export interface ElectronAPI {
   /** Create a terminal process. workspacePath is optional - if provided, hooks env vars are injected */
-  createTerminal: (terminalId: string, workspacePath?: string) => void;
+  createTerminal: (
+    terminalId: string,
+    workspacePath?: string,
+    command?: string,
+    cwd?: string
+  ) => void;
   onTerminalData: (callback: (data: { terminalId: string; data: string }) => void) => void;
   onTerminalExit: (
     callback: (data: { terminalId: string; code: number; signal?: number }) => void
@@ -194,8 +199,8 @@ export interface RepresentationAPI {
 // Expose protected methods that allow the renderer process to use
 // the ipcRenderer without exposing the entire object
 contextBridge.exposeInMainWorld('electronAPI', {
-  createTerminal: (terminalId: string, workspacePath?: string) => {
-    ipcRenderer.send('terminal-create', terminalId, workspacePath);
+  createTerminal: (terminalId: string, workspacePath?: string, command?: string, cwd?: string) => {
+    ipcRenderer.send('terminal-create', terminalId, workspacePath, command, cwd);
   },
   onTerminalData: (callback: (data: { terminalId: string; data: string }) => void) => {
     ipcRenderer.on('terminal-data', (_event, data: { terminalId: string; data: string }) =>
