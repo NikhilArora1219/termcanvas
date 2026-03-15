@@ -407,6 +407,31 @@ export class AgentServiceImpl implements IAgentService {
           this.terminalService.executeCommand(cliCommand);
           // Set up terminal clear after Claude REPL is ready
           this.setupTerminalClearOnReady();
+
+          // Watch for "Session ID ... is already in use" error
+          // and retry with a fresh start command (not resume)
+          if (isResume && this.adapter.buildStartSessionCommand) {
+            const errorWatcher = this.terminalService.onData((data: string) => {
+              if (data.includes('is already in use')) {
+                console.warn('[AgentService] Session in use, retrying with new session', {
+                  agentId: this.agentId,
+                  sessionId,
+                });
+                errorWatcher(); // unsubscribe
+                // Wait for shell prompt, then start fresh
+                setTimeout(() => {
+                  const freshCommand = this.adapter!.buildStartSessionCommand!(
+                    workspacePath,
+                    crypto.randomUUID(),
+                    permissionMode
+                  );
+                  this.terminalService.executeCommand(freshCommand);
+                }, 500);
+              }
+            });
+            // Auto-cleanup watcher after 5 seconds if no error
+            setTimeout(() => errorWatcher(), 5000);
+          }
         }
       }
     }
