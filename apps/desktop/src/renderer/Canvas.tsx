@@ -1286,43 +1286,46 @@ function CanvasFlow() {
           {/* Save status indicator */}
           <SaveIndicator isSaving={isSaving} lastSavedAt={lastSavedAt} />
 
-          <ReactFlow
-            nodes={nodes}
-            edges={edges}
-            onNodesChange={handleNodesChange}
-            onEdgesChange={onEdgesChange}
-            onConnect={onConnect}
-            onConnectStart={onConnectStart}
-            onConnectEnd={onConnectEnd}
-            onNodeDrag={onNodeDrag}
-            onNodeDragStop={onNodeDragStop}
-            onPaneContextMenu={contextMenuState.onPaneContextMenu}
-            onPaneClick={contextMenuState.onPaneClick}
-            onDragOver={canvasDrop.handleCanvasDragOver}
-            onDrop={canvasDrop.handleCanvasDrop}
-            nodeTypes={nodeTypes}
-            fitView
-            style={{ backgroundColor: 'var(--color-bg-canvas)' }}
-            defaultViewport={{ x: 0, y: 0, zoom: 1 }}
-            minZoom={0.1}
-            maxZoom={4}
-            panOnScroll={true}
-            zoomOnScroll={true}
-            panOnDrag={keyboardModifiers.isNodeDragEnabled}
-            zoomOnPinch={true}
-            nodesDraggable={keyboardModifiers.isNodeDragEnabled}
-            nodesConnectable={true}
-            elementsSelectable={true}
-            nodesFocusable={true}
-          >
-            <Background
-              variant={BackgroundVariant.Lines}
-              gap={24}
-              size={2}
-              color={theme === 'light-web' ? '#F5F6F8' : theme === 'dark' ? '#171717' : '#3a3a3a'}
-            />
-            <ForkGhostNode />
-          </ReactFlow>
+          {/* ReactFlow wrapper — needs explicit dimensions for xyflow v12 */}
+          <div style={{ flex: 1, minHeight: 0, position: 'relative' }}>
+            <ReactFlow
+              nodes={nodes}
+              edges={edges}
+              onNodesChange={handleNodesChange}
+              onEdgesChange={onEdgesChange}
+              onConnect={onConnect}
+              onConnectStart={onConnectStart}
+              onConnectEnd={onConnectEnd}
+              onNodeDrag={onNodeDrag}
+              onNodeDragStop={onNodeDragStop}
+              onPaneContextMenu={contextMenuState.onPaneContextMenu}
+              onPaneClick={contextMenuState.onPaneClick}
+              onDragOver={canvasDrop.handleCanvasDragOver}
+              onDrop={canvasDrop.handleCanvasDrop}
+              nodeTypes={nodeTypes}
+              fitView
+              style={{ width: '100%', height: '100%', backgroundColor: 'var(--color-bg-canvas)' }}
+              defaultViewport={{ x: 0, y: 0, zoom: 1 }}
+              minZoom={0.1}
+              maxZoom={4}
+              panOnScroll={true}
+              zoomOnScroll={true}
+              panOnDrag={keyboardModifiers.isNodeDragEnabled}
+              zoomOnPinch={true}
+              nodesDraggable={keyboardModifiers.isNodeDragEnabled}
+              nodesConnectable={true}
+              elementsSelectable={true}
+              nodesFocusable={true}
+            >
+              <Background
+                variant={BackgroundVariant.Lines}
+                gap={24}
+                size={2}
+                color={theme === 'light-web' ? '#F5F6F8' : theme === 'dark' ? '#171717' : '#3a3a3a'}
+              />
+              <ForkGhostNode />
+            </ReactFlow>
+          </div>
 
           {/* Fork Session Modal */}
           {forkModal.isOpen && forkModal.modalData && (
