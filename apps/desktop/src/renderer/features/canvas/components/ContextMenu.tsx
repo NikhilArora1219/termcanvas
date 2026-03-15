@@ -48,10 +48,11 @@ export function ContextMenu({ contextMenuState, canvasActions }: ContextMenuProp
             <div className="context-menu-divider" />
             <div className="context-menu-item" onClick={() => canvasActions.addNoteNode()}>
               <span className="context-menu-label">Add Note</span>
-              <span className="context-menu-shortcut">{isMac ? '⌘M' : 'Ctrl+M'}</span>
+              <span className="context-menu-shortcut">{isMac ? '⇧⌘N' : 'Ctrl+Shift+N'}</span>
             </div>
             <div className="context-menu-item" onClick={() => canvasActions.addCodeNode()}>
               <span className="context-menu-label">Add Code</span>
+              <span className="context-menu-shortcut">{isMac ? '⇧⌘C' : 'Ctrl+Shift+C'}</span>
             </div>
             <div className="context-menu-divider" />
             <div className="context-menu-item" onClick={() => canvasActions.addAgentNode()}>

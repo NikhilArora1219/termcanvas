@@ -932,6 +932,20 @@ function CanvasFlow() {
         canvasActions.addStarterNode();
       }
 
+      // Cmd+Shift+N: Add Note tile
+      if (modifierKey && event.shiftKey && event.key === 'N') {
+        event.preventDefault();
+        canvasActions.addNoteNode();
+        return;
+      }
+
+      // Cmd+Shift+C: Add Code tile
+      if (modifierKey && event.shiftKey && event.key === 'C') {
+        event.preventDefault();
+        canvasActions.addCodeNode();
+        return;
+      }
+
       if ((isMac && event.metaKey) || (!isMac && event.ctrlKey)) {
         if (!keyboardModifiers.isNodeDragEnabled) {
           keyboardModifiers.enableNodeDrag();
@@ -1299,6 +1313,7 @@ function CanvasFlow() {
               onNodeDrag={onNodeDrag}
               onNodeDragStop={onNodeDragStop}
               onPaneContextMenu={contextMenuState.onPaneContextMenu}
+              onNodeContextMenu={contextMenuState.onPaneContextMenu}
               onPaneClick={contextMenuState.onPaneClick}
               onDragOver={canvasDrop.handleCanvasDragOver}
               onDrop={canvasDrop.handleCanvasDrop}
