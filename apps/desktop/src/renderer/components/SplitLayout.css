@@ -16,11 +16,7 @@
 .split-layout-panel {
   height: 100%;
   overflow: hidden;
-  transition:
-    width 0.4s cubic-bezier(0.25, 0.8, 0.25, 1),
-    opacity 0.3s ease,
-    transform 0.3s ease;
-  will-change: width, opacity, transform;
+  /* No transitions — instant panel switching for responsiveness */
 }
 
 .split-layout-left {

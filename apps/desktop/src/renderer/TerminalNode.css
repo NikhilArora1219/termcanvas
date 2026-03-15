@@ -10,10 +10,6 @@
   display: flex;
   flex-direction: column;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-  /* Only transition border and shadow — NOT width/height/transform (causes resize jank) */
-  transition:
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
   box-sizing: border-box;
 }
 
@@ -40,7 +36,6 @@
   box-shadow:
     0 0 0 3px rgba(74, 158, 255, 0.5),
     0 4px 12px rgba(0, 0, 0, 0.4);
-  /* No transform: scale() — causes expensive re-render of xterm canvas */
 }
 
 .terminal-node-header {
@@ -61,7 +56,6 @@
   color: inherit;
   flex: 1;
   cursor: pointer;
-  transition: opacity 0.2s ease;
   padding: 4px;
   border-radius: 4px;
   margin: -4px;
@@ -78,7 +72,6 @@
   font-size: 16px;
   padding: 4px 8px;
   border-radius: 4px;
-  transition: all 0.2s ease;
   line-height: 1;
   display: flex;
   align-items: center;
@@ -87,7 +80,6 @@
 
 .terminal-node-header .issue-external-link-icon:hover {
   background: rgba(74, 158, 255, 0.2);
-  transform: scale(1.1);
 }
 
 .terminal-node-header .issue-id {
@@ -123,15 +115,11 @@
   flex: 1;
   padding: 0;
   min-height: 200px;
-  /* Prevent text selection on the wrapper and all children by default */
   user-select: none;
   -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
   overflow: hidden;
 }
 
-/* When terminal is not active, dim it slightly to indicate it's not interactive */
 .terminal-node-content:not(.active) {
   opacity: 0.85;
 }
@@ -140,19 +128,15 @@
   opacity: 1;
 }
 
-/* Re-enable text selection only inside the xterm terminal where text is rendered */
+/* Re-enable text selection inside xterm */
 .terminal-node-content .xterm {
   user-select: text;
   -webkit-user-select: text;
-  -moz-user-select: text;
-  -ms-user-select: text;
 }
 
 .terminal-node-content .xterm * {
   user-select: text;
   -webkit-user-select: text;
-  -moz-user-select: text;
-  -ms-user-select: text;
 }
 
 /* Terminal handle styles */
@@ -251,7 +235,6 @@
   pointer-events: auto;
   box-shadow: none;
   transform: none;
-  transition: none;
 }
 
 .terminal-node .react-flow__resize-control.handle:hover {

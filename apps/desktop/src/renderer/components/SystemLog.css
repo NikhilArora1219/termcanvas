@@ -4,7 +4,7 @@
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  transition: height 0.2s ease;
+  /* No transition — instant collapse/expand */
 }
 
 .system-log.collapsed {

@@ -68,18 +68,6 @@
   color: inherit;
 }
 
-/* Global rule: when hovering over an interactive element, 
-   any child with text-secondary should become text-primary */
-*:hover * {
-  --hover-text-color: var(--color-text-primary);
-}
-
-/* Specific rule: elements with text-secondary color should transition smoothly */
-[class*="text-secondary"],
-[style*="--color-text-secondary"] {
-  transition: color 0.2s ease;
-}
-
 html,
 body {
   font-family: "SF UI Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
