@@ -340,16 +340,37 @@ function TerminalNode({ data, id, selected }: NodeProps) {
     terminalInstanceRef.current = terminal;
     fitAddonRef.current = fitAddon;
 
-    // ALWAYS defer terminal.open() to requestAnimationFrame.
-    // xterm's Viewport constructor calls syncScrollArea() which reads
-    // renderer.dimensions synchronously. If the container has no layout
-    // yet (React painted but browser hasn't computed dimensions), this
-    // throws "Cannot read properties of undefined (reading 'dimensions')".
-    // Using rAF guarantees the browser has completed layout.
-    requestAnimationFrame(() => {
-      if (!terminalRef.current) return;
+    // Wait for container to have real dimensions before opening xterm.
+    // ReactFlow animates nodes into position — the container may have
+    // zero dimensions on the first few frames. We poll until dimensions
+    // are available (max ~500ms), then open + fit.
+    let openAttempts = 0;
+    const maxAttempts = 10;
 
-      terminal.open(terminalRef.current);
+    const tryOpenTerminal = () => {
+      const container = terminalRef.current;
+      if (!container) return;
+
+      const { offsetWidth, offsetHeight } = container;
+      openAttempts++;
+
+      if (offsetWidth === 0 || offsetHeight === 0) {
+        if (openAttempts < maxAttempts) {
+          setTimeout(tryOpenTerminal, 50);
+          return;
+        }
+        console.warn(
+          '[TerminalNode] Container still has zero dimensions after retries, opening anyway',
+          {
+            terminalId,
+            offsetWidth,
+            offsetHeight,
+            attempts: openAttempts,
+          }
+        );
+      }
+
+      terminal.open(container);
 
       // Load WebGL addon AFTER terminal.open()
       try {
@@ -364,22 +385,27 @@ function TerminalNode({ data, id, selected }: NodeProps) {
         );
       }
 
-      // Fit terminal after open + WebGL
+      // Fit terminal after open
       try {
         fitAddon.fit();
       } catch (error) {
         console.warn('[TerminalNode] Error fitting terminal initially, retrying...', error);
-        setTimeout(() => {
-          try {
-            if (fitAddonRef.current && terminalInstanceRef.current) {
-              fitAddonRef.current.fit();
-            }
-          } catch (retryError) {
-            console.error('[TerminalNode] Failed to fit terminal on retry', retryError);
-          }
-        }, 100);
       }
-    });
+
+      // Always do a second fit after a short delay to catch layout settling
+      setTimeout(() => {
+        try {
+          if (fitAddonRef.current && terminalInstanceRef.current) {
+            fitAddonRef.current.fit();
+          }
+        } catch (retryError) {
+          // Silently ignore — terminal is functional
+        }
+      }, 200);
+    };
+
+    // Start the open attempt on next frame
+    requestAnimationFrame(tryOpenTerminal);
 
     // Log initial state
     console.log('[TerminalNode] ✅ Terminal mounted successfully', {
