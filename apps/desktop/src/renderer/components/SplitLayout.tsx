@@ -8,7 +8,7 @@
 import type { ReactNode } from 'react';
 import { useViewModeStore } from '../stores/ViewModeStore';
 import { HeaderBar } from './HeaderBar';
-import { SystemLog } from './SystemLog';
+// SystemLog moved to Canvas.tsx as a floating panel
 import { TerminalPanel } from './TerminalPanel';
 import './SplitLayout.css';
 
@@ -45,7 +45,6 @@ export function SplitLayout({ children }: SplitLayoutProps) {
           <TerminalPanel />
         </div>
       </div>
-      <SystemLog />
     </div>
   );
 }

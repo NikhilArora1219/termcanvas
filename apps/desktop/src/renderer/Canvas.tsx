@@ -32,6 +32,7 @@ import { type CommandAction, CommandPalette } from './components/CommandPalette'
 import ConversationNode from './components/ConversationNode';
 import { EntityLegend } from './components/EntityLegend';
 import { NewAgentModal } from './components/NewAgentModal';
+import { SystemLog } from './components/SystemLog';
 import UserMessageNode from './components/UserMessageNode';
 import { useTheme } from './context';
 import {
@@ -1385,6 +1386,9 @@ function CanvasFlow() {
 
           {/* Zoom Controls */}
           <ZoomControls onZoomIn={zoomIn} onZoomOut={zoomOut} />
+
+          {/* System Dashboard (floating, bottom-right) */}
+          <SystemLog />
 
           {/* Entity Type Legend */}
           <EntityLegend
