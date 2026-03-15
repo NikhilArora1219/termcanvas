@@ -91,7 +91,7 @@ export function AgentNodePresentation({
   const { activeView, setActiveView } = useAgentViewMode({
     terminalService,
     agentService: agent,
-    initialView: data.activeView || 'overview',
+    initialView: data.activeView || (data.initialPrompt ? 'terminal' : 'overview'),
     onViewChange: (view) => onDataChange({ activeView: view }),
   });
 
