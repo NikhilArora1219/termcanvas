@@ -1326,7 +1326,7 @@ function CanvasFlow() {
             zoomOnScroll={true}
             panOnDrag={keyboardModifiers.isNodeDragEnabled}
             zoomOnPinch={true}
-            nodesDraggable={keyboardModifiers.isNodeDragEnabled}
+            nodesDraggable={true}
             nodesConnectable={true}
             elementsSelectable={true}
             nodesFocusable={true}

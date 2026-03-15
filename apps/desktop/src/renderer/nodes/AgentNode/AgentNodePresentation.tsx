@@ -866,7 +866,7 @@ export function AgentNodePresentation({
 
         {/* Content Area - Conditional rendering to avoid Claude Code session conflicts */}
         {/* Terminal and Chat cannot be mounted simultaneously as they both use the same session */}
-        <div className="agent-node-content">
+        <div className="agent-node-content nodrag nowheel">
           {activeView === 'overview' && (
             <AgentOverviewView
               agentId={data.agentId}
@@ -907,7 +907,7 @@ export function AgentNodePresentation({
         </div>
 
         {/* Bottom buttons - fork */}
-        <div className="agent-node-bottom-buttons">
+        <div className="agent-node-bottom-buttons nodrag">
           <AgentNodeForkHandle nodeId={nodeId} />
         </div>
 
