@@ -45,14 +45,21 @@ function TerminalNode({ data, id, selected }: NodeProps) {
   const [showIssueModal, setShowIssueModal] = useState(false);
   const [isDragOver, setIsDragOver] = useState(false);
 
-  // Handle wheel events when node is selected - prevent canvas scrolling
+  // Handle wheel events on terminal content:
+  // - When terminal is focused/selected: let xterm handle scrollback, stop canvas zoom
+  // - When Cmd/Ctrl is held: allow canvas zoom (don't stop propagation)
   useEffect(() => {
     const contentElement = terminalRef.current;
-    if (!contentElement || !selected) return;
+    if (!contentElement) return;
 
     const handleWheel = (e: WheelEvent) => {
-      // Always prevent canvas scrolling when node is selected
-      e.stopPropagation();
+      // If Cmd/Ctrl is held, let the canvas handle zoom
+      if (e.metaKey || e.ctrlKey) return;
+
+      // Only block canvas zoom when the terminal is selected (focused)
+      if (selected) {
+        e.stopPropagation();
+      }
     };
 
     contentElement.addEventListener('wheel', handleWheel, { passive: false });
@@ -1026,7 +1033,7 @@ function TerminalNode({ data, id, selected }: NodeProps) {
 
       <div
         ref={terminalRef}
-        className={`terminal-node-content ${selected ? 'active' : ''}`}
+        className={`terminal-node-content nodrag ${selected ? 'active' : ''}`}
         onClick={() => terminalInstanceRef.current?.focus()}
       />
 

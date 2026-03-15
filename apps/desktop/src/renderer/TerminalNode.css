@@ -126,6 +126,21 @@
   -moz-user-select: none;
   -ms-user-select: none;
   overflow: hidden;
+  /* Ensure xterm fills the container */
+  position: relative;
+}
+
+/* Make xterm fill the terminal content area */
+.terminal-node-content .xterm {
+  height: 100% !important;
+}
+
+.terminal-node-content .xterm-viewport {
+  overflow-y: auto !important;
+}
+
+.terminal-node-content .xterm-screen {
+  height: 100% !important;
 }
 
 /* When terminal is not active, dim it slightly to indicate it's not interactive */
