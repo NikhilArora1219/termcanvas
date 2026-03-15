@@ -365,6 +365,21 @@ const createWindow = (): void => {
         });
       }
 
+      // Ensure common tool paths are in PATH (claude, cargo, etc.)
+      const homedir = process.env.HOME || os.homedir();
+      const extraPaths = [
+        `${homedir}/.local/bin`,
+        `${homedir}/.cargo/bin`,
+        '/opt/homebrew/bin',
+        '/opt/homebrew/sbin',
+        '/usr/local/bin',
+      ];
+      const currentPath = process.env.PATH || '';
+      const enhancedPath = [
+        ...extraPaths.filter((p) => !currentPath.includes(p)),
+        currentPath,
+      ].join(':');
+
       const ptyProcess = pty.spawn(shell, shellArgs, {
         name: 'xterm-256color',
         cols: 80,
@@ -373,6 +388,7 @@ const createWindow = (): void => {
         env: {
           ...process.env,
           ...hookEnv,
+          PATH: enhancedPath,
           TERM: 'xterm-256color',
           COLORTERM: 'truecolor',
           // Ensure shell runs in interactive mode via environment
