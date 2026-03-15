@@ -64,6 +64,8 @@ export interface UseCanvasDropOptions {
   collapsePill: () => void;
   /** Callback to open agent modal with position and Linear issue data */
   onOpenAgentModal?: (position: { x: number; y: number }, linearIssue: LinearIssue) => void;
+  /** Callback to add a file-backed node (from navigator drag) */
+  onFileDropped?: (filePath: string, content: string, position: { x: number; y: number }) => void;
 }
 
 /**
@@ -77,8 +79,14 @@ export interface UseCanvasDropOptions {
  * @param options - Configuration options for the hook
  */
 export function useCanvasDrop(options: UseCanvasDropOptions): UseCanvasDropReturn {
-  const { screenToFlowPosition, setNodes, isPillExpanded, collapsePill, onOpenAgentModal } =
-    options;
+  const {
+    screenToFlowPosition,
+    setNodes,
+    isPillExpanded,
+    collapsePill,
+    onOpenAgentModal,
+    onFileDropped,
+  } = options;
 
   /**
    * Handler for when a drag starts on an issue card
@@ -106,10 +114,37 @@ export function useCanvasDrop(options: UseCanvasDropOptions): UseCanvasDropRetur
    * 2. Linear issue: Opens agent modal with the issue data (user can then create agent)
    */
   const handleCanvasDrop = useCallback(
-    (e: React.DragEvent) => {
+    async (e: React.DragEvent) => {
       e.preventDefault();
 
       try {
+        // Handle file drops from Navigator sidebar
+        const fileData = e.dataTransfer.getData('application/termcanvas-file');
+        if (fileData && onFileDropped) {
+          const entry = JSON.parse(fileData) as {
+            name: string;
+            path: string;
+            isDirectory: boolean;
+            extension: string;
+          };
+          if (!entry.isDirectory) {
+            const position = screenToFlowPosition({
+              x: e.clientX,
+              y: e.clientY,
+            });
+
+            const imageExts = ['.png', '.jpg', '.jpeg', '.gif', '.svg', '.webp', '.bmp'];
+            if (imageExts.includes(entry.extension.toLowerCase())) {
+              onFileDropped(entry.path, '', position);
+            } else {
+              const result = await window.electron?.ipcRenderer.invoke('fs:read-file', entry.path);
+              const content = result?.success ? result.content : '';
+              onFileDropped(entry.path, content, position);
+            }
+            return;
+          }
+        }
+
         const jsonData = e.dataTransfer.getData('application/json');
         if (!jsonData) return;
 
@@ -181,7 +216,7 @@ export function useCanvasDrop(options: UseCanvasDropOptions): UseCanvasDropRetur
         console.error('Error handling drop:', error);
       }
     },
-    [screenToFlowPosition, setNodes, isPillExpanded, collapsePill, onOpenAgentModal]
+    [screenToFlowPosition, setNodes, isPillExpanded, collapsePill, onOpenAgentModal, onFileDropped]
   );
 
   return {

@@ -42,6 +42,12 @@ export interface UseCanvasActionsReturn {
   addBrowserNode: (position?: { x: number; y: number }) => void;
   /** Create an agent node with modal data (for programmatic creation) */
   createAgentWithData: (options: Omit<CreateAgentOptions, 'screenToFlowPosition'>) => void;
+  /** Add a note node to the canvas */
+  addNoteNode: (position?: { x: number; y: number }) => void;
+  /** Add a code node to the canvas */
+  addCodeNode: (position?: { x: number; y: number }) => void;
+  /** Add a file-backed node (auto-detects type from extension) */
+  addFileNode: (filePath: string, content: string, position?: { x: number; y: number }) => void;
 }
 
 /**
@@ -275,6 +281,86 @@ export function useCanvasActions({
     [contextMenu, screenToFlowPosition, setNodes, closeContextMenu]
   );
 
+  /**
+   * Add a note node
+   */
+  const addNoteNode = useCallback(
+    (position?: { x: number; y: number }) => {
+      const newNode = canvasNodeService.createNoteNode({
+        position,
+        contextMenuPosition: contextMenu,
+        screenToFlowPosition,
+      });
+      setNodes((nds) => [...nds, newNode]);
+      closeContextMenu();
+    },
+    [contextMenu, screenToFlowPosition, setNodes, closeContextMenu]
+  );
+
+  /**
+   * Add a code node
+   */
+  const addCodeNode = useCallback(
+    (position?: { x: number; y: number }) => {
+      const newNode = canvasNodeService.createCodeNode({
+        position,
+        contextMenuPosition: contextMenu,
+        screenToFlowPosition,
+        content: '// Start coding here...\n',
+        title: 'Untitled',
+      });
+      setNodes((nds) => [...nds, newNode]);
+      closeContextMenu();
+    },
+    [contextMenu, screenToFlowPosition, setNodes, closeContextMenu]
+  );
+
+  /**
+   * Add a file-backed node (auto-detects type from extension)
+   */
+  const addFileNode = useCallback(
+    (filePath: string, content: string, position?: { x: number; y: number }) => {
+      const ext = filePath.slice(filePath.lastIndexOf('.')).toLowerCase();
+      const fileName = filePath.split('/').pop() ?? filePath;
+      const imageExts = ['.png', '.jpg', '.jpeg', '.gif', '.svg', '.webp', '.bmp'];
+      const mdExts = ['.md', '.mdx', '.markdown'];
+
+      let newNode: Node;
+
+      if (imageExts.includes(ext)) {
+        newNode = canvasNodeService.createImageNode({
+          position,
+          contextMenuPosition: contextMenu,
+          screenToFlowPosition,
+          filePath,
+          title: fileName,
+        });
+      } else if (mdExts.includes(ext)) {
+        newNode = canvasNodeService.createNoteNode({
+          position,
+          contextMenuPosition: contextMenu,
+          screenToFlowPosition,
+          filePath,
+          content,
+          title: fileName,
+        });
+      } else {
+        newNode = canvasNodeService.createCodeNode({
+          position,
+          contextMenuPosition: contextMenu,
+          screenToFlowPosition,
+          filePath,
+          content,
+          title: fileName,
+        });
+      }
+
+      setNodes((nds) => [...nds, newNode]);
+      closeContextMenu();
+    },
+    [contextMenu, screenToFlowPosition, setNodes, closeContextMenu]
+  );
+
   return {
     addAgentNode,
     addTerminalNode,
@@ -284,5 +370,8 @@ export function useCanvasActions({
     addClaudeCodeTerminal,
     addBrowserNode,
     createAgentWithData,
+    addNoteNode,
+    addCodeNode,
+    addFileNode,
   };
 }

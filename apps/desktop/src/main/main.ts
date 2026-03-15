@@ -14,6 +14,15 @@ import * as pty from 'node-pty';
 import type { CodingAgentState } from '../../types/coding-agent-status';
 import { DatabaseFactory } from './database';
 import type { IDatabase } from './database/IDatabase';
+import {
+  createDirectory,
+  deleteFile,
+  getFileInfo,
+  readDirectory,
+  readFileContent,
+  renameFile,
+  writeFileContent,
+} from './file-operations';
 import { type AgentHooksService, createAgentHooksService } from './services/agent-hooks';
 import type { CanvasState } from './types/database';
 import { WorktreeManagerFactory } from './worktree';
@@ -738,6 +747,60 @@ function registerIpcHandlers(): void {
       return { success: false, exists: false, error: error.message || 'Unknown error' };
     }
   });
+
+  // =========================================================================
+  // File System Operations (for Navigator sidebar)
+  // =========================================================================
+
+  ipcMain.handle('fs:readdir', async (_event, dirPath: string) => {
+    return readDirectory(dirPath);
+  });
+
+  ipcMain.handle('fs:read-file', async (_event, filePath: string) => {
+    return readFileContent(filePath);
+  });
+
+  ipcMain.handle('fs:write-file', async (_event, filePath: string, content: string) => {
+    return writeFileContent(filePath, content);
+  });
+
+  ipcMain.handle('fs:file-info', async (_event, filePath: string) => {
+    return getFileInfo(filePath);
+  });
+
+  ipcMain.handle('fs:mkdir', async (_event, dirPath: string) => {
+    return createDirectory(dirPath);
+  });
+
+  ipcMain.handle('fs:rename', async (_event, oldPath: string, newPath: string) => {
+    return renameFile(oldPath, newPath);
+  });
+
+  ipcMain.handle('fs:delete', async (_event, filePath: string) => {
+    return deleteFile(filePath);
+  });
+
+  ipcMain.handle('dialog:open-directory', async () => {
+    const result = await dialog.showOpenDialog({
+      properties: ['openDirectory'],
+    });
+    if (result.canceled || result.filePaths.length === 0) {
+      return { success: true, path: null };
+    }
+    return { success: true, path: result.filePaths[0] };
+  });
+
+  ipcMain.handle(
+    'recent-workspaces:upsert',
+    async (_event, workspace: { path: string; name: string }) => {
+      try {
+        await database.upsertRecentWorkspace(workspace);
+        return { success: true };
+      } catch (error: any) {
+        return { success: false, error: error.message };
+      }
+    }
+  );
 
   ipcMain.handle('agent-status:load', async (_event, agentId: string) => {
     try {

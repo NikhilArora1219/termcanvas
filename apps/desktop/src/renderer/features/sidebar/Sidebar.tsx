@@ -3,10 +3,11 @@
  *
  * Displays the canvas sidebar with:
  * - User info header
- * - Agent hierarchy (projects -> branches -> agents)
+ * - Tabbed layout: Files (navigator) / Agents (hierarchy + Linear)
  * - Folder lock/highlight controls
  * - Linear issues panel (when connected)
  */
+import { useState } from 'react';
 import type {
   AgentHierarchy,
   LinearIssue,
@@ -16,6 +17,7 @@ import type {
   UseLinearReturn,
   UseSidebarStateReturn,
 } from '../../hooks';
+import { Navigator, useNavigatorStore } from '../navigator';
 import { AgentHierarchySection } from './components/AgentHierarchySection';
 import { LinearIssuesPanel } from './components/LinearIssuesPanel';
 import { SidebarHeader } from './components/SidebarHeader';
@@ -61,6 +63,15 @@ export function Sidebar({
   onIssueDragStart,
   onIssueClick,
 }: SidebarProps) {
+  const [activeTab, setActiveTab] = useState<'files' | 'agents'>('files');
+
+  const handleOpenDirectory = async () => {
+    const result = await window.electron?.ipcRenderer.invoke('dialog:open-directory');
+    if (result?.success && result.path) {
+      useNavigatorStore.getState().setRootPath(result.path);
+    }
+  };
+
   return (
     <>
       <div
@@ -74,29 +85,52 @@ export function Sidebar({
         />
 
         {!sidebar.isSidebarCollapsed && (
-          <div className="sidebar-content">
-            {hasAgents && (
-              <AgentHierarchySection
-                hierarchy={agentHierarchy}
-                folderPathMap={folderPathMap}
-                collapsedProjects={sidebar.collapsedProjects}
-                collapsedBranches={sidebar.collapsedBranches}
-                onToggleProject={sidebar.toggleProject}
-                onToggleBranch={sidebar.toggleBranch}
-                folderLock={folderLock}
-                folderHighlight={folderHighlight}
-              />
-            )}
+          <>
+            <div className="sidebar-tabs">
+              <button
+                className={`sidebar-tab ${activeTab === 'files' ? 'active' : ''}`}
+                onClick={() => setActiveTab('files')}
+              >
+                Files
+              </button>
+              <button
+                className={`sidebar-tab ${activeTab === 'agents' ? 'active' : ''}`}
+                onClick={() => setActiveTab('agents')}
+              >
+                Agents
+              </button>
+            </div>
 
-            {linear.isConnected && (
-              <LinearIssuesPanel
-                linear={linear}
-                linearPanel={linearPanel}
-                onIssueDragStart={onIssueDragStart}
-                onIssueClick={onIssueClick}
-              />
-            )}
-          </div>
+            <div className="sidebar-content">
+              {activeTab === 'files' && <Navigator onOpenDirectory={handleOpenDirectory} />}
+
+              {activeTab === 'agents' && (
+                <>
+                  {hasAgents && (
+                    <AgentHierarchySection
+                      hierarchy={agentHierarchy}
+                      folderPathMap={folderPathMap}
+                      collapsedProjects={sidebar.collapsedProjects}
+                      collapsedBranches={sidebar.collapsedBranches}
+                      onToggleProject={sidebar.toggleProject}
+                      onToggleBranch={sidebar.toggleBranch}
+                      folderLock={folderLock}
+                      folderHighlight={folderHighlight}
+                    />
+                  )}
+
+                  {linear.isConnected && (
+                    <LinearIssuesPanel
+                      linear={linear}
+                      linearPanel={linearPanel}
+                      onIssueDragStart={onIssueDragStart}
+                      onIssueClick={onIssueClick}
+                    />
+                  )}
+                </>
+              )}
+            </div>
+          </>
         )}
       </div>
 

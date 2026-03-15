@@ -300,6 +300,86 @@ export class CanvasNodeService {
   }
 
   /**
+   * Create a note node
+   */
+  createNoteNode(
+    options: CreateNodeOptions & { filePath?: string; content?: string; title?: string }
+  ): Node {
+    const nodePosition = this.resolvePosition(options);
+
+    return {
+      id: `node-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+      type: 'note',
+      position: nodePosition,
+      data: {
+        filePath: options.filePath,
+        content: options.content ?? '',
+        title: options.title ?? 'Untitled Note',
+        isEditing: !options.filePath,
+      },
+      style: {
+        width: 400,
+        height: 350,
+      },
+    };
+  }
+
+  /**
+   * Create a code node
+   */
+  createCodeNode(
+    options: CreateNodeOptions & {
+      filePath?: string;
+      content?: string;
+      title?: string;
+      language?: string;
+    }
+  ): Node {
+    const nodePosition = this.resolvePosition(options);
+
+    return {
+      id: `node-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+      type: 'code',
+      position: nodePosition,
+      data: {
+        filePath: options.filePath,
+        content: options.content ?? '',
+        title: options.title ?? 'Untitled',
+        language: options.language,
+        isEditing: false,
+      },
+      style: {
+        width: 500,
+        height: 400,
+      },
+    };
+  }
+
+  /**
+   * Create an image node
+   */
+  createImageNode(
+    options: CreateNodeOptions & { filePath: string; title?: string; mimeType?: string }
+  ): Node {
+    const nodePosition = this.resolvePosition(options);
+
+    return {
+      id: `node-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+      type: 'image',
+      position: nodePosition,
+      data: {
+        filePath: options.filePath,
+        title: options.title ?? options.filePath.split('/').pop() ?? 'Image',
+        mimeType: options.mimeType,
+      },
+      style: {
+        width: 400,
+        height: 300,
+      },
+    };
+  }
+
+  /**
    * Create an agent node from a starter node submission
    */
   createAgentNodeFromStarter(

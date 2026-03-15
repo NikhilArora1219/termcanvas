@@ -46,6 +46,14 @@ export function ContextMenu({ contextMenuState, canvasActions }: ContextMenuProp
               <span className="context-menu-label">Spawn Multiple...</span>
             </div>
             <div className="context-menu-divider" />
+            <div className="context-menu-item" onClick={() => canvasActions.addNoteNode()}>
+              <span className="context-menu-label">Add Note</span>
+              <span className="context-menu-shortcut">{isMac ? '⌘M' : 'Ctrl+M'}</span>
+            </div>
+            <div className="context-menu-item" onClick={() => canvasActions.addCodeNode()}>
+              <span className="context-menu-label">Add Code</span>
+            </div>
+            <div className="context-menu-divider" />
             <div className="context-menu-item" onClick={() => canvasActions.addAgentNode()}>
               <span className="context-menu-label">Add Agent</span>
               <span className="context-menu-shortcut">{isMac ? '⌘T' : 'Ctrl+T'}</span>

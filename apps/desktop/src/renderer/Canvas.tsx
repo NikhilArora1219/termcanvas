@@ -304,6 +304,17 @@ function CanvasFlow() {
     },
   });
 
+  const canvasActions = useCanvasActions({
+    setNodes,
+    contextMenu: contextMenuState.contextMenu,
+    closeContextMenu: contextMenuState.closeContextMenu,
+    lockedFolderPath: folderLock.lockedFolderPath,
+    onShowAgentModal: (pos) => {
+      pendingAgent.setPending(pos);
+      canvasUI.openNewAgentModal();
+    },
+  });
+
   const canvasDrop = useCanvasDrop({
     screenToFlowPosition,
     setNodes,
@@ -313,16 +324,8 @@ function CanvasFlow() {
       pendingAgent.setPending(position, linearIssue);
       canvasUI.openNewAgentModal();
     },
-  });
-
-  const canvasActions = useCanvasActions({
-    setNodes,
-    contextMenu: contextMenuState.contextMenu,
-    closeContextMenu: contextMenuState.closeContextMenu,
-    lockedFolderPath: folderLock.lockedFolderPath,
-    onShowAgentModal: (pos) => {
-      pendingAgent.setPending(pos);
-      canvasUI.openNewAgentModal();
+    onFileDropped: (filePath, content, position) => {
+      canvasActions.addFileNode(filePath, content, position);
     },
   });
 

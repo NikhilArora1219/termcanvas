@@ -17,7 +17,10 @@ import TerminalNode from '../TerminalNode';
 import AgentChatNode from './AgentChatNode';
 import { AgentNode } from './AgentNode';
 import BrowserNode from './BrowserNode';
+import { CodeNode } from './CodeNode';
 import ConversationNode from './ConversationNode';
+import { ImageNode } from './ImageNode';
+import { NoteNode } from './NoteNode';
 import StarterNode from './StarterNode';
 
 // Import schemas
@@ -25,8 +28,11 @@ import {
   AgentChatNodeDataSchema,
   AgentNodeDataSchema,
   BrowserNodeDataSchema,
+  CodeNodeDataSchema,
   ConversationNodeDataSchema,
   CustomNodeDataSchema,
+  ImageNodeDataSchema,
+  NoteNodeDataSchema,
   TerminalNodeDataSchema,
 } from './schemas';
 
@@ -142,6 +148,30 @@ const NODE_CONFIGS: NodeTypeConfig[] = [
     persistence: {
       enabled: true,
       dataSchema: BrowserNodeDataSchema,
+    },
+  },
+  {
+    type: 'note',
+    component: NoteNode as ComponentType<NodeProps>,
+    persistence: {
+      enabled: true,
+      dataSchema: NoteNodeDataSchema,
+    },
+  },
+  {
+    type: 'code',
+    component: CodeNode as ComponentType<NodeProps>,
+    persistence: {
+      enabled: true,
+      dataSchema: CodeNodeDataSchema,
+    },
+  },
+  {
+    type: 'image',
+    component: ImageNode as ComponentType<NodeProps>,
+    persistence: {
+      enabled: true,
+      dataSchema: ImageNodeDataSchema,
     },
   },
 ];

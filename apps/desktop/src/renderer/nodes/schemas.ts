@@ -186,6 +186,44 @@ export const BrowserNodeDataSchema = z.object({
 });
 
 // =============================================================================
+// Content Tile Node Schemas
+// =============================================================================
+
+/**
+ * Schema for NoteNode data (markdown content on canvas)
+ */
+export const NoteNodeDataSchema = z.object({
+  filePath: z.string().optional(),
+  content: z.string(),
+  title: z.string(),
+  isEditing: z.boolean().optional(),
+  lastModified: z.string().optional(),
+});
+
+/**
+ * Schema for CodeNode data (syntax-highlighted code on canvas)
+ */
+export const CodeNodeDataSchema = z.object({
+  filePath: z.string().optional(),
+  content: z.string(),
+  language: z.string().optional(),
+  title: z.string(),
+  isEditing: z.boolean().optional(),
+  lastModified: z.string().optional(),
+});
+
+/**
+ * Schema for ImageNode data (image display on canvas)
+ */
+export const ImageNodeDataSchema = z.object({
+  filePath: z.string(),
+  title: z.string(),
+  mimeType: z.string().optional(),
+  width: z.number().optional(),
+  height: z.number().optional(),
+});
+
+// =============================================================================
 // Inferred Types
 // =============================================================================
 
@@ -196,3 +234,6 @@ export type MessageNodeData = z.infer<typeof MessageNodeDataSchema>;
 export type ConversationNodeData = z.infer<typeof ConversationNodeDataSchema>;
 export type AgentChatNodeData = z.infer<typeof AgentChatNodeDataSchema>;
 export type BrowserNodeData = z.infer<typeof BrowserNodeDataSchema>;
+export type NoteNodeData = z.infer<typeof NoteNodeDataSchema>;
+export type CodeNodeData = z.infer<typeof CodeNodeDataSchema>;
+export type ImageNodeData = z.infer<typeof ImageNodeDataSchema>;
