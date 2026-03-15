@@ -9,7 +9,7 @@ import type {
   RecentWorkspace,
   TerminalSessionState,
 } from '@termcanvas/shared';
-import { app, BrowserWindow, dialog, ipcMain, shell } from 'electron';
+import { app, BrowserWindow, dialog, ipcMain, net, protocol, shell } from 'electron';
 import * as pty from 'node-pty';
 import type { CodingAgentState } from '../../types/coding-agent-status';
 import { DatabaseFactory } from './database';
@@ -795,23 +795,6 @@ function registerIpcHandlers(): void {
     }
     return { success: true, path: result.filePaths[0] };
   });
-
-  ipcMain.handle(
-    'recent-workspaces:upsert',
-    async (_event, workspace: { path: string; name: string }) => {
-      try {
-        const now = Date.now();
-        await database.upsertRecentWorkspace({
-          ...workspace,
-          lastOpenedAt: now,
-          createdAt: now,
-        });
-        return { success: true };
-      } catch (error: any) {
-        return { success: false, error: error.message };
-      }
-    }
-  );
 
   ipcMain.handle('agent-status:load', async (_event, agentId: string) => {
     try {
@@ -1986,8 +1969,23 @@ function registerIpcHandlers(): void {
   console.log('[Main] IPC handlers registered successfully');
 }
 
+// Register custom protocol for serving local files in dev mode
+// This avoids file:// security restrictions when renderer loads from http://
+protocol.registerSchemesAsPrivileged([
+  {
+    scheme: 'local-file',
+    privileges: { bypassCSP: true, supportFetchAPI: true, stream: true },
+  },
+]);
+
 app.whenReady().then(async () => {
   console.log('[Main] App ready');
+
+  // Register local-file:// protocol handler for serving images/files
+  protocol.handle('local-file', (request) => {
+    const filePath = decodeURIComponent(request.url.replace('local-file://', ''));
+    return net.fetch(`file://${filePath}`);
+  });
 
   // Check if running in MCP server mode
   const mcpMode = isMcpMode();

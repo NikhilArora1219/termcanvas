@@ -1,6 +1,7 @@
 /**
  * ImageNode — Image display tile on the canvas.
  * Read-only. Supports drag from navigator for .png, .jpg, .svg, .gif, .webp.
+ * Uses local-file:// custom protocol to bypass Electron security in dev mode.
  */
 import { Handle, type NodeProps, Position } from '@xyflow/react';
 import { useEffect, useState } from 'react';
@@ -14,7 +15,8 @@ export function ImageNode({ data, selected }: NodeProps) {
 
   useEffect(() => {
     if (!nodeData.filePath) return;
-    setImageSrc(`file://${nodeData.filePath}`);
+    // Use custom protocol registered in main process to serve local files
+    setImageSrc(`local-file://${encodeURIComponent(nodeData.filePath)}`);
   }, [nodeData.filePath]);
 
   return (

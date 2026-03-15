@@ -55,6 +55,9 @@ interface UseCodeMirrorOptions {
 export function useCodeMirror({ content, language, readOnly, onChange }: UseCodeMirrorOptions) {
   const containerRef = useRef<HTMLDivElement>(null);
   const viewRef = useRef<EditorView | null>(null);
+  // Use ref to avoid stale closure — onChange can change between renders
+  const onChangeRef = useRef(onChange);
+  onChangeRef.current = onChange;
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -68,7 +71,9 @@ export function useCodeMirror({ content, language, readOnly, onChange }: UseCode
       EditorView.theme({
         '&': { height: '100%', fontSize: '13px' },
         '.cm-scroller': { overflow: 'auto' },
-        '.cm-content': { fontFamily: "'SF Mono', 'Fira Code', 'Cascadia Code', monospace" },
+        '.cm-content': {
+          fontFamily: "'SF Mono', 'Fira Code', 'Cascadia Code', monospace",
+        },
       }),
     ];
 
@@ -80,15 +85,14 @@ export function useCodeMirror({ content, language, readOnly, onChange }: UseCode
       extensions.push(LANGUAGE_MAP[language]());
     }
 
-    if (onChange) {
-      extensions.push(
-        EditorView.updateListener.of((update) => {
-          if (update.docChanged) {
-            onChange(update.state.doc.toString());
-          }
-        })
-      );
-    }
+    // Use ref for onChange to avoid stale closure
+    extensions.push(
+      EditorView.updateListener.of((update) => {
+        if (update.docChanged && onChangeRef.current) {
+          onChangeRef.current(update.state.doc.toString());
+        }
+      })
+    );
 
     const state = EditorState.create({ doc: content, extensions });
     const view = new EditorView({ state, parent: containerRef.current });
