@@ -708,6 +708,14 @@
   color: #5a9cf5;
 }
 
+.context-menu-item.danger {
+  color: #f87171;
+}
+
+.context-menu-item.danger:hover {
+  background: rgba(248, 113, 113, 0.1);
+}
+
 .context-menu-label {
   flex: 1;
   font-size: 14px;

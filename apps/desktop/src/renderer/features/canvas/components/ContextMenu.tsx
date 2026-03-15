@@ -9,9 +9,10 @@ import type { UseCanvasActionsReturn, UseContextMenuReturn } from '../../../hook
 export interface ContextMenuProps {
   contextMenuState: UseContextMenuReturn;
   canvasActions: UseCanvasActionsReturn;
+  onDeleteNode?: (nodeId: string) => void;
 }
 
-export function ContextMenu({ contextMenuState, canvasActions }: ContextMenuProps) {
+export function ContextMenu({ contextMenuState, canvasActions, onDeleteNode }: ContextMenuProps) {
   const [showSpawnModal, setShowSpawnModal] = useState(false);
   const [showBulkModal, setShowBulkModal] = useState(false);
 
@@ -67,6 +68,21 @@ export function ContextMenu({ contextMenuState, canvasActions }: ContextMenuProp
               <span className="context-menu-label">New Conversation</span>
               <span className="context-menu-shortcut">{isMac ? '⌘N' : 'Ctrl+N'}</span>
             </div>
+            {contextMenuState.contextNodeId && onDeleteNode && (
+              <>
+                <div className="context-menu-divider" />
+                <div
+                  className="context-menu-item danger"
+                  onClick={() => {
+                    onDeleteNode(contextMenuState.contextNodeId!);
+                    contextMenuState.closeContextMenu();
+                  }}
+                >
+                  <span className="context-menu-label">Close</span>
+                  <span className="context-menu-shortcut">⌫</span>
+                </div>
+              </>
+            )}
           </div>
         </>
       )}

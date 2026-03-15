@@ -27,11 +27,13 @@ export type ContextMenuPosition = {
 interface ContextMenuState {
   /** Current context menu position, or null if closed */
   contextMenu: ContextMenuPosition;
+  /** ID of the node that was right-clicked, or null if pane */
+  contextNodeId: string | null;
 }
 
 interface ContextMenuActions {
   /** Open context menu at position */
-  openContextMenu: (x: number, y: number) => void;
+  openContextMenu: (x: number, y: number, nodeId?: string) => void;
   /** Close the context menu */
   closeContextMenu: () => void;
 }
@@ -45,10 +47,11 @@ export type ContextMenuStore = ContextMenuState & ContextMenuActions;
 export const useContextMenuStore = create<ContextMenuStore>((set) => ({
   // Initial state
   contextMenu: null,
+  contextNodeId: null,
 
   // Actions
-  openContextMenu: (x, y) => set({ contextMenu: { x, y } }),
-  closeContextMenu: () => set({ contextMenu: null }),
+  openContextMenu: (x, y, nodeId) => set({ contextMenu: { x, y }, contextNodeId: nodeId ?? null }),
+  closeContextMenu: () => set({ contextMenu: null, contextNodeId: null }),
 }));
 
 // =============================================================================
@@ -61,10 +64,14 @@ export const useContextMenuStore = create<ContextMenuStore>((set) => ({
 export interface UseContextMenuReturn {
   /** Current context menu position, or null if closed */
   contextMenu: ContextMenuPosition;
+  /** ID of the right-clicked node, or null if pane */
+  contextNodeId: string | null;
   /** Ref to attach to the context menu element for click-outside detection */
   contextMenuRef: React.RefObject<HTMLDivElement>;
-  /** Handler for pane context menu event (right-click) */
+  /** Handler for pane context menu event (right-click on empty canvas) */
   onPaneContextMenu: (event: React.MouseEvent | MouseEvent) => void;
+  /** Handler for node context menu event (right-click on a node) */
+  onNodeContextMenu: (event: React.MouseEvent | MouseEvent, node: { id: string }) => void;
   /** Handler for pane click event (closes context menu) */
   onPaneClick: () => void;
   /** Close the context menu */
@@ -80,12 +87,17 @@ export interface UseContextMenuReturn {
  * - Event handlers for opening/closing
  */
 export function useContextMenu(): UseContextMenuReturn {
-  const { contextMenu, openContextMenu, closeContextMenu } = useContextMenuStore();
+  const { contextMenu, contextNodeId, openContextMenu, closeContextMenu } = useContextMenuStore();
   const contextMenuRef = useRef<HTMLDivElement>(null!);
 
   const onPaneContextMenu = (event: React.MouseEvent | MouseEvent) => {
     event.preventDefault();
     openContextMenu(event.clientX, event.clientY);
+  };
+
+  const onNodeContextMenu = (event: React.MouseEvent | MouseEvent, node: { id: string }) => {
+    event.preventDefault();
+    openContextMenu(event.clientX, event.clientY, node.id);
   };
 
   const onPaneClick = () => {
@@ -110,8 +122,10 @@ export function useContextMenu(): UseContextMenuReturn {
 
   return {
     contextMenu,
+    contextNodeId,
     contextMenuRef,
     onPaneContextMenu,
+    onNodeContextMenu,
     onPaneClick,
     closeContextMenu,
   };

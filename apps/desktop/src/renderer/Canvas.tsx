@@ -270,7 +270,7 @@ function CanvasFlow() {
   // React Flow Utilities and Feature Hooks
   // =============================================================================
 
-  const { screenToFlowPosition, getNodes, zoomIn, zoomOut } = useReactFlow();
+  const { screenToFlowPosition, getNodes, zoomIn, zoomOut, deleteElements } = useReactFlow();
   const updateNodeInternals = useUpdateNodeInternals();
 
   const contextMenuState = useContextMenu();
@@ -1313,7 +1313,7 @@ function CanvasFlow() {
               onNodeDrag={onNodeDrag}
               onNodeDragStop={onNodeDragStop}
               onPaneContextMenu={contextMenuState.onPaneContextMenu}
-              onNodeContextMenu={contextMenuState.onPaneContextMenu}
+              onNodeContextMenu={contextMenuState.onNodeContextMenu}
               onPaneClick={contextMenuState.onPaneClick}
               onDragOver={canvasDrop.handleCanvasDragOver}
               onDrop={canvasDrop.handleCanvasDrop}
@@ -1374,7 +1374,11 @@ function CanvasFlow() {
           />
 
           {/* Context Menu */}
-          <ContextMenu contextMenuState={contextMenuState} canvasActions={canvasActions} />
+          <ContextMenu
+            contextMenuState={contextMenuState}
+            canvasActions={canvasActions}
+            onDeleteNode={(nodeId) => deleteElements({ nodes: [{ id: nodeId }] })}
+          />
 
           {/* Floating Action Buttons (Highlight All, Settings) */}
           <FloatingActionButtons
