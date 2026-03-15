@@ -336,8 +336,27 @@ function TerminalNode({ data, id, selected }: NodeProps) {
     const fitAddon = new FitAddon();
     terminal.loadAddon(fitAddon);
 
-    // Open terminal in DOM
-    terminal.open(terminalRef.current);
+    // Open terminal in DOM — wrap in rAF to ensure container has layout dimensions.
+    // xterm's Viewport.syncScrollArea reads renderer dimensions synchronously,
+    // which throws if the container has zero size (race with React paint).
+    const openTerminal = () => {
+      if (!terminalRef.current) return;
+      terminal.open(terminalRef.current);
+    };
+
+    // Try immediate open first; if dimensions aren't ready, defer to next frame
+    try {
+      openTerminal();
+    } catch (openError) {
+      console.warn('[TerminalNode] terminal.open() failed, deferring to rAF', openError);
+      requestAnimationFrame(() => {
+        try {
+          openTerminal();
+        } catch (retryError) {
+          console.error('[TerminalNode] terminal.open() failed on retry', retryError);
+        }
+      });
+    }
 
     // Load WebGL addon for better rendering performance
     // WebGL must be loaded AFTER terminal.open()

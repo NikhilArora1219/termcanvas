@@ -85,15 +85,28 @@ export function nodesToCanvasNodes(nodes: Node[]): CanvasNode[] {
  * Convert database CanvasNodes to React Flow nodes
  */
 export function canvasNodesToNodes(canvasNodes: CanvasNode[]): Node[] {
-  return canvasNodes.map((cn) => ({
-    id: cn.id,
-    type: cn.type,
-    position: { ...cn.position },
-    // Deep clone data to ensure each node has its own independent data object
-    // This prevents shared reference issues when multiple nodes are loaded
-    data: JSON.parse(JSON.stringify(cn.data)) as Record<string, unknown>,
-    style: cn.style ? { ...cn.style } : undefined,
-  }));
+  return canvasNodes.map((cn) => {
+    const style = cn.style ? { ...cn.style } : undefined;
+    return {
+      id: cn.id,
+      type: cn.type,
+      position: { ...cn.position },
+      // Deep clone data to ensure each node has its own independent data object
+      // This prevents shared reference issues when multiple nodes are loaded
+      data: JSON.parse(JSON.stringify(cn.data)) as Record<string, unknown>,
+      style,
+      // Set measured dimensions from style to suppress ReactFlow error #004
+      // (nodes need dimensions before DOM measurement on initial render)
+      ...(style?.width && style?.height
+        ? {
+            measured: {
+              width: style.width as number,
+              height: style.height as number,
+            },
+          }
+        : {}),
+    };
+  });
 }
 
 /**
