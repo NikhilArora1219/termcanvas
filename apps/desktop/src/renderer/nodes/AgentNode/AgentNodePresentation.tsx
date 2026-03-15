@@ -618,7 +618,18 @@ export function AgentNodePresentation({
           className="agent-node-side-handle"
         />
 
-        {/* Status Indicator - Top Left */}
+        {/* Drag handle strip — full-width bar at top for grabbing */}
+        <div
+          className="agent-node-drag-handle"
+          style={{
+            height: 32,
+            cursor: 'grab',
+            borderBottom: '1px solid rgba(255,255,255,0.06)',
+            flexShrink: 0,
+          }}
+        />
+
+        {/* Status Indicator - Top Left (overlaid on drag handle) */}
         <div className="agent-node-status-indicator">
           <div
             className={`status-indicator ${statusConfig.className}`}
