@@ -1,0 +1,37 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/niarora/.agent-orchestrator/hooks/notify.sh"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/niarora/.agent-orchestrator/hooks/notify.sh"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/niarora/.agent-orchestrator/hooks/notify.sh"
+          }
+        ]
+      }
+    ]
+  }
+}

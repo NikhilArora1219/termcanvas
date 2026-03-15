@@ -17,16 +17,19 @@ export function ContextMenu({ contextMenuState, canvasActions, onDeleteNode }: C
   const [showBulkModal, setShowBulkModal] = useState(false);
 
   // Clamp menu position to viewport so it doesn't overflow off-screen
+  // If menu would extend past bottom, anchor it from the bottom instead
   const menuPosition = useMemo(() => {
     if (!contextMenuState.contextMenu) return null;
     const { x, y } = contextMenuState.contextMenu;
-    const menuWidth = 240;
-    const menuMaxHeight = 400;
+    const menuWidth = 250;
     const vw = window.innerWidth;
     const vh = window.innerHeight;
+    const padding = 12;
     return {
-      top: Math.min(y, vh - menuMaxHeight - 8),
-      left: Math.min(x, vw - menuWidth - 8),
+      // If near bottom, flip upward: anchor menu bottom to click point
+      top: y > vh - padding ? undefined : Math.max(padding, y),
+      bottom: y > vh - padding ? padding : undefined,
+      left: Math.min(Math.max(padding, x), vw - menuWidth - padding),
     };
   }, [contextMenuState.contextMenu]);
 
@@ -45,6 +48,7 @@ export function ContextMenu({ contextMenuState, canvasActions, onDeleteNode }: C
             style={{
               position: 'fixed',
               top: menuPosition.top,
+              bottom: menuPosition.bottom,
               left: menuPosition.left,
             }}
             onClick={(e) => e.stopPropagation()}
