@@ -322,7 +322,7 @@ export function useCanvasActions({
     (filePath: string, content: string, position?: { x: number; y: number }) => {
       const ext = filePath.slice(filePath.lastIndexOf('.')).toLowerCase();
       const fileName = filePath.split('/').pop() ?? filePath;
-      const imageExts = ['.png', '.jpg', '.jpeg', '.gif', '.svg', '.webp', '.bmp'];
+      const imageExts = ['.png', '.jpg', '.jpeg', '.gif', '.svg', '.webp', '.bmp', '.drawio'];
       const mdExts = ['.md', '.mdx', '.markdown'];
 
       let newNode: Node;

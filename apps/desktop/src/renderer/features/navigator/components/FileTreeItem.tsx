@@ -26,6 +26,7 @@ const FILE_ICONS: Record<string, string> = {
   '.css': '🎨',
   '.html': '🌐',
   '.svg': '🖼️',
+  '.drawio': '📐',
   '.png': '🖼️',
   '.jpg': '🖼️',
   '.gif': '🖼️',

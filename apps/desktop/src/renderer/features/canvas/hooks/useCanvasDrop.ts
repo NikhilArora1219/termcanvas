@@ -133,7 +133,7 @@ export function useCanvasDrop(options: UseCanvasDropOptions): UseCanvasDropRetur
               y: e.clientY,
             });
 
-            const imageExts = ['.png', '.jpg', '.jpeg', '.gif', '.svg', '.webp', '.bmp'];
+            const imageExts = ['.png', '.jpg', '.jpeg', '.gif', '.svg', '.webp', '.bmp', '.drawio'];
             if (imageExts.includes(entry.extension.toLowerCase())) {
               onFileDropped(entry.path, '', position);
             } else {
