@@ -3,7 +3,7 @@
  *
  * Right-click menu for adding nodes to the canvas.
  */
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import type { UseCanvasActionsReturn, UseContextMenuReturn } from '../../../hooks';
 
 export interface ContextMenuProps {
@@ -16,13 +16,27 @@ export function ContextMenu({ contextMenuState, canvasActions, onDeleteNode }: C
   const [showSpawnModal, setShowSpawnModal] = useState(false);
   const [showBulkModal, setShowBulkModal] = useState(false);
 
+  // Clamp menu position to viewport so it doesn't overflow off-screen
+  const menuPosition = useMemo(() => {
+    if (!contextMenuState.contextMenu) return null;
+    const { x, y } = contextMenuState.contextMenu;
+    const menuWidth = 240;
+    const menuMaxHeight = 400;
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    return {
+      top: Math.min(y, vh - menuMaxHeight - 8),
+      left: Math.min(x, vw - menuWidth - 8),
+    };
+  }, [contextMenuState.contextMenu]);
+
   if (!contextMenuState.contextMenu && !showSpawnModal && !showBulkModal) return null;
 
   const isMac = navigator.userAgent.toUpperCase().indexOf('MAC') >= 0;
 
   return (
     <>
-      {contextMenuState.contextMenu && !showSpawnModal && !showBulkModal && (
+      {contextMenuState.contextMenu && menuPosition && !showSpawnModal && !showBulkModal && (
         <>
           <div className="context-menu-overlay" onClick={contextMenuState.closeContextMenu} />
           <div
@@ -30,8 +44,8 @@ export function ContextMenu({ contextMenuState, canvasActions, onDeleteNode }: C
             className="context-menu"
             style={{
               position: 'fixed',
-              top: contextMenuState.contextMenu.y,
-              left: contextMenuState.contextMenu.x,
+              top: menuPosition.top,
+              left: menuPosition.left,
             }}
             onClick={(e) => e.stopPropagation()}
           >
