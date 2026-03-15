@@ -368,8 +368,8 @@ function CanvasFlow() {
         })),
 
     // Zoom controls
-    zoomIn: () => zoomIn(),
-    zoomOut: () => zoomOut(),
+    zoomIn: () => zoomIn({ duration: 200 }),
+    zoomOut: () => zoomOut({ duration: 200 }),
   });
 
   // =============================================================================

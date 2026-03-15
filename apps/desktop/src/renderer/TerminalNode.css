@@ -10,7 +10,10 @@
   display: flex;
   flex-direction: column;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-  transition: all 0.2s ease;
+  /* Only transition border and shadow — NOT width/height/transform (causes resize jank) */
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
   box-sizing: border-box;
 }
 
@@ -37,7 +40,7 @@
   box-shadow:
     0 0 0 3px rgba(74, 158, 255, 0.5),
     0 4px 12px rgba(0, 0, 0, 0.4);
-  transform: scale(1.02);
+  /* No transform: scale() — causes expensive re-render of xterm canvas */
 }
 
 .terminal-node-header {

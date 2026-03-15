@@ -828,29 +828,22 @@ function TerminalNode({ data, id, selected }: NodeProps) {
         clearTimeout(resizeTimeout);
       }
 
-      // For smooth resizing during drag: use shorter delay (50ms)
-      // For final resize after drag ends: use longer delay (150ms)
-      const timeSinceStart = now - resizeStartTime;
-      const isDragging = timeSinceStart < 2000; // Assume dragging if resize started less than 2s ago
-      const delay = isDragging ? 50 : 150;
-
+      // Debounce resize: wait until user stops resizing before refitting terminal.
+      // This prevents xterm from reflowing on every pixel of drag, which causes jank.
+      // Use 200ms debounce — terminal content reflows once after resize ends.
       resizeTimeout = setTimeout(() => {
         try {
           if (fitAddonRef.current && terminalInstanceRef.current && terminalRef.current) {
-            // Use requestAnimationFrame for smooth rendering
             requestAnimationFrame(() => {
               performFit();
+              isResizing = false;
             });
           }
         } catch (error) {
           console.warn('[TerminalNode] Error handling resize', error);
-        } finally {
-          // Reset resizing flag after delay
-          setTimeout(() => {
-            isResizing = false;
-          }, 300);
+          isResizing = false;
         }
-      }, delay);
+      }, 200);
     };
 
     resizeObserver = new ResizeObserver(handleResize);
