@@ -1,7 +1,7 @@
 .entity-legend {
   position: absolute;
   bottom: 16px;
-  left: 16px;
+  left: 24px;
   background: var(--color-bg-primary);
   border: 1px solid var(--color-border);
   border-radius: 8px;
