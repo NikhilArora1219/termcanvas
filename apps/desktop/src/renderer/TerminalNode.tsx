@@ -336,76 +336,46 @@ function TerminalNode({ data, id, selected }: NodeProps) {
     const fitAddon = new FitAddon();
     terminal.loadAddon(fitAddon);
 
-    // Store refs BEFORE open() to ensure they're available for event handlers
+    // Open terminal in DOM synchronously.
+    // Note: xterm may log a "dimensions" error on first render if the
+    // container hasn't been measured yet — this is cosmetic, not functional.
+    terminal.open(terminalRef.current);
+
+    // Load WebGL addon for better rendering performance
+    // WebGL must be loaded AFTER terminal.open()
+    try {
+      const webglAddon = new WebglAddon();
+      terminal.loadAddon(webglAddon);
+      webglAddonRef.current = webglAddon;
+      console.log('[TerminalNode] ✅ WebGL renderer enabled', { terminalId });
+    } catch (error) {
+      console.warn(
+        '[TerminalNode] ⚠️ WebGL addon failed to load, falling back to canvas renderer',
+        error
+      );
+    }
+
+    // Store refs BEFORE fit() to ensure they're available
     terminalInstanceRef.current = terminal;
     fitAddonRef.current = fitAddon;
 
-    // Wait for container to have real dimensions before opening xterm.
-    // ReactFlow animates nodes into position — the container may have
-    // zero dimensions on the first few frames. We poll until dimensions
-    // are available (max ~500ms), then open + fit.
-    let openAttempts = 0;
-    const maxAttempts = 10;
+    // Fit terminal - wrap in try-catch to handle timing issues
+    try {
+      fitAddon.fit();
+    } catch (error) {
+      console.warn('[TerminalNode] Error fitting terminal initially, retrying...', error);
+    }
 
-    const tryOpenTerminal = () => {
-      const container = terminalRef.current;
-      if (!container) return;
-
-      const { offsetWidth, offsetHeight } = container;
-      openAttempts++;
-
-      if (offsetWidth === 0 || offsetHeight === 0) {
-        if (openAttempts < maxAttempts) {
-          setTimeout(tryOpenTerminal, 50);
-          return;
-        }
-        console.warn(
-          '[TerminalNode] Container still has zero dimensions after retries, opening anyway',
-          {
-            terminalId,
-            offsetWidth,
-            offsetHeight,
-            attempts: openAttempts,
-          }
-        );
-      }
-
-      terminal.open(container);
-
-      // Load WebGL addon AFTER terminal.open()
+    // Second fit after layout settles (ReactFlow node animation)
+    setTimeout(() => {
       try {
-        const webglAddon = new WebglAddon();
-        terminal.loadAddon(webglAddon);
-        webglAddonRef.current = webglAddon;
-        console.log('[TerminalNode] ✅ WebGL renderer enabled', { terminalId });
-      } catch (error) {
-        console.warn(
-          '[TerminalNode] ⚠️ WebGL addon failed to load, falling back to canvas renderer',
-          error
-        );
-      }
-
-      // Fit terminal after open
-      try {
-        fitAddon.fit();
-      } catch (error) {
-        console.warn('[TerminalNode] Error fitting terminal initially, retrying...', error);
-      }
-
-      // Always do a second fit after a short delay to catch layout settling
-      setTimeout(() => {
-        try {
-          if (fitAddonRef.current && terminalInstanceRef.current) {
-            fitAddonRef.current.fit();
-          }
-        } catch (retryError) {
-          // Silently ignore — terminal is functional
+        if (fitAddonRef.current && terminalInstanceRef.current) {
+          fitAddonRef.current.fit();
         }
-      }, 200);
-    };
-
-    // Start the open attempt on next frame
-    requestAnimationFrame(tryOpenTerminal);
+      } catch (retryError) {
+        // Silently ignore
+      }
+    }, 200);
 
     // Log initial state
     console.log('[TerminalNode] ✅ Terminal mounted successfully', {
