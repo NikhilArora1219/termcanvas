@@ -16,20 +16,35 @@ export function ContextMenu({ contextMenuState, canvasActions, onDeleteNode }: C
   const [showSpawnModal, setShowSpawnModal] = useState(false);
   const [showBulkModal, setShowBulkModal] = useState(false);
 
-  // Clamp menu position to viewport so it doesn't overflow off-screen
-  // If menu would extend past bottom, anchor it from the bottom instead
-  const menuPosition = useMemo(() => {
+  // Clamp menu position to viewport and set max-height based on available space
+  const menuStyle = useMemo(() => {
     if (!contextMenuState.contextMenu) return null;
     const { x, y } = contextMenuState.contextMenu;
     const menuWidth = 250;
     const vw = window.innerWidth;
     const vh = window.innerHeight;
     const padding = 12;
+    const clampedLeft = Math.min(Math.max(padding, x), vw - menuWidth - padding);
+    const spaceBelow = vh - y - padding;
+    const spaceAbove = y - padding;
+
+    // If more space above than below and menu would be cut off below
+    if (spaceBelow < 300 && spaceAbove > spaceBelow) {
+      return {
+        position: 'fixed' as const,
+        bottom: vh - y,
+        left: clampedLeft,
+        maxHeight: Math.min(spaceAbove, vh - padding * 2),
+        overflowY: 'auto' as const,
+      };
+    }
+
     return {
-      // If near bottom, flip upward: anchor menu bottom to click point
-      top: y > vh - padding ? undefined : Math.max(padding, y),
-      bottom: y > vh - padding ? padding : undefined,
-      left: Math.min(Math.max(padding, x), vw - menuWidth - padding),
+      position: 'fixed' as const,
+      top: y,
+      left: clampedLeft,
+      maxHeight: Math.min(spaceBelow, vh - padding * 2),
+      overflowY: 'auto' as const,
     };
   }, [contextMenuState.contextMenu]);
 
@@ -39,18 +54,13 @@ export function ContextMenu({ contextMenuState, canvasActions, onDeleteNode }: C
 
   return (
     <>
-      {contextMenuState.contextMenu && menuPosition && !showSpawnModal && !showBulkModal && (
+      {contextMenuState.contextMenu && menuStyle && !showSpawnModal && !showBulkModal && (
         <>
           <div className="context-menu-overlay" onClick={contextMenuState.closeContextMenu} />
           <div
             ref={contextMenuState.contextMenuRef}
             className="context-menu"
-            style={{
-              position: 'fixed',
-              top: menuPosition.top,
-              bottom: menuPosition.bottom,
-              left: menuPosition.left,
-            }}
+            style={menuStyle}
             onClick={(e) => e.stopPropagation()}
           >
             <div className="context-menu-item" onClick={() => canvasActions.addTerminalNode()}>
