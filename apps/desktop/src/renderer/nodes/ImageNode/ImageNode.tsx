@@ -1,9 +1,8 @@
 /**
  * ImageNode — Image display tile on the canvas.
- * Read-only. Supports drag from navigator for .png, .jpg, .svg, .gif, .webp.
  * Uses local-file:// custom protocol to bypass Electron security in dev mode.
  */
-import { Handle, type NodeProps, Position } from '@xyflow/react';
+import { Handle, type NodeProps, NodeResizer, Position } from '@xyflow/react';
 import { useEffect, useState } from 'react';
 import type { ImageNodeData } from '../schemas';
 import './ImageNode.css';
@@ -15,18 +14,24 @@ export function ImageNode({ data, selected }: NodeProps) {
 
   useEffect(() => {
     if (!nodeData.filePath) return;
-    // Use custom protocol registered in main process to serve local files
     setImageSrc(`local-file://${encodeURIComponent(nodeData.filePath)}`);
   }, [nodeData.filePath]);
 
   return (
     <div className={`image-node ${selected ? 'selected' : ''}`}>
+      <NodeResizer
+        minWidth={200}
+        minHeight={150}
+        isVisible={true}
+        lineStyle={{ borderColor: 'transparent' }}
+        handleStyle={{ width: 8, height: 8, borderRadius: '50%' }}
+      />
       <Handle type="target" position={Position.Top} />
       <div className="image-node-header">
         <span className="image-node-badge">IMAGE</span>
         <span className="image-node-title">{nodeData.title || 'Image'}</span>
       </div>
-      <div className="image-node-body">
+      <div className="image-node-body nodrag nowheel">
         {error ? (
           <div className="image-node-error">{error}</div>
         ) : imageSrc ? (

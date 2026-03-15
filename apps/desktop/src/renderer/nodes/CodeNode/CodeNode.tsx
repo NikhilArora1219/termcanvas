@@ -1,7 +1,7 @@
 /**
  * CodeNode — Syntax-highlighted code tile on the canvas.
  */
-import { Handle, type NodeProps, Position, useReactFlow } from '@xyflow/react';
+import { Handle, type NodeProps, NodeResizer, Position, useReactFlow } from '@xyflow/react';
 import { useCallback, useState } from 'react';
 import type { CodeNodeData } from '../schemas';
 import { getLanguageFromExtension, useCodeMirror } from './useCodeMirror';
@@ -41,6 +41,13 @@ export function CodeNode({ id, data, selected }: NodeProps) {
 
   return (
     <div className={`code-node ${selected ? 'selected' : ''}`}>
+      <NodeResizer
+        minWidth={320}
+        minHeight={200}
+        isVisible={true}
+        lineStyle={{ borderColor: 'transparent' }}
+        handleStyle={{ width: 8, height: 8, borderRadius: '50%' }}
+      />
       <Handle type="target" position={Position.Top} />
       <div className="code-node-header">
         <span className="code-node-badge">CODE</span>
@@ -52,7 +59,7 @@ export function CodeNode({ id, data, selected }: NodeProps) {
           </button>
         )}
       </div>
-      <div className="code-node-body" ref={containerRef} />
+      <div className="code-node-body nodrag nowheel" ref={containerRef} />
       <Handle type="source" position={Position.Bottom} />
     </div>
   );

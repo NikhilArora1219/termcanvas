@@ -244,7 +244,7 @@ function BrowserNode({ data, selected }: NodeProps) {
       )}
 
       {/* Webview container */}
-      <div className="browser-content">
+      <div className="browser-content nodrag nowheel">
         {currentUrl ? (
           <webview
             ref={webviewRef as React.RefObject<Electron.WebviewTag>}

@@ -3,17 +3,13 @@
  * Displays rendered markdown. Double-click to edit (textarea), blur/Esc to render.
  * Strips YAML frontmatter (---...---) before rendering.
  */
-import { Handle, type NodeProps, Position, useReactFlow } from '@xyflow/react';
+import { Handle, type NodeProps, NodeResizer, Position, useReactFlow } from '@xyflow/react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import type { NoteNodeData } from '../schemas';
 import './NoteNode.css';
 
-/**
- * Strip YAML frontmatter from markdown content.
- * Matches --- at start of string, any content, then closing ---.
- */
 function stripFrontmatter(text: string): string {
   const trimmed = text.trimStart();
   if (!trimmed.startsWith('---')) return text;
@@ -29,7 +25,6 @@ export function NoteNode({ id, data, selected }: NodeProps) {
   const [content, setContent] = useState(nodeData.content ?? '');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // Strip frontmatter for display, but keep raw content for editing
   const displayContent = useMemo(() => stripFrontmatter(content), [content]);
 
   useEffect(() => {
@@ -63,13 +58,20 @@ export function NoteNode({ id, data, selected }: NodeProps) {
 
   return (
     <div className={`note-node ${selected ? 'selected' : ''}`}>
+      <NodeResizer
+        minWidth={300}
+        minHeight={200}
+        isVisible={true}
+        lineStyle={{ borderColor: 'transparent' }}
+        handleStyle={{ width: 8, height: 8, borderRadius: '50%' }}
+      />
       <Handle type="target" position={Position.Top} />
       <div className="note-node-header">
         <span className="note-node-badge">NOTE</span>
         <span className="note-node-title">{nodeData.title || 'Untitled'}</span>
       </div>
       <div
-        className="note-node-body"
+        className="note-node-body nodrag nowheel"
         onDoubleClick={() => {
           setIsEditing(true);
           updateNodeData(id, { isEditing: true });
