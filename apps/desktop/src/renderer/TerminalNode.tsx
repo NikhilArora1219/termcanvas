@@ -336,63 +336,50 @@ function TerminalNode({ data, id, selected }: NodeProps) {
     const fitAddon = new FitAddon();
     terminal.loadAddon(fitAddon);
 
-    // Open terminal in DOM — wrap in rAF to ensure container has layout dimensions.
-    // xterm's Viewport.syncScrollArea reads renderer dimensions synchronously,
-    // which throws if the container has zero size (race with React paint).
-    const openTerminal = () => {
-      if (!terminalRef.current) return;
-      terminal.open(terminalRef.current);
-    };
-
-    // Try immediate open first; if dimensions aren't ready, defer to next frame
-    try {
-      openTerminal();
-    } catch (openError) {
-      console.warn('[TerminalNode] terminal.open() failed, deferring to rAF', openError);
-      requestAnimationFrame(() => {
-        try {
-          openTerminal();
-        } catch (retryError) {
-          console.error('[TerminalNode] terminal.open() failed on retry', retryError);
-        }
-      });
-    }
-
-    // Load WebGL addon for better rendering performance
-    // WebGL must be loaded AFTER terminal.open()
-    try {
-      const webglAddon = new WebglAddon();
-      terminal.loadAddon(webglAddon);
-      webglAddonRef.current = webglAddon;
-      console.log('[TerminalNode] ✅ WebGL renderer enabled', { terminalId });
-    } catch (error) {
-      console.warn(
-        '[TerminalNode] ⚠️ WebGL addon failed to load, falling back to canvas renderer',
-        error
-      );
-      // Terminal will continue to work with default canvas renderer
-    }
-
-    // Store refs BEFORE fit() to ensure they're available
+    // Store refs BEFORE open() to ensure they're available for event handlers
     terminalInstanceRef.current = terminal;
     fitAddonRef.current = fitAddon;
 
-    // Fit terminal - wrap in try-catch to handle timing issues
-    try {
-      fitAddon.fit();
-    } catch (error) {
-      console.warn('[TerminalNode] Error fitting terminal initially, retrying...', error);
-      // Retry after a short delay
-      setTimeout(() => {
-        try {
-          if (fitAddonRef.current && terminalInstanceRef.current) {
-            fitAddonRef.current.fit();
+    // ALWAYS defer terminal.open() to requestAnimationFrame.
+    // xterm's Viewport constructor calls syncScrollArea() which reads
+    // renderer.dimensions synchronously. If the container has no layout
+    // yet (React painted but browser hasn't computed dimensions), this
+    // throws "Cannot read properties of undefined (reading 'dimensions')".
+    // Using rAF guarantees the browser has completed layout.
+    requestAnimationFrame(() => {
+      if (!terminalRef.current) return;
+
+      terminal.open(terminalRef.current);
+
+      // Load WebGL addon AFTER terminal.open()
+      try {
+        const webglAddon = new WebglAddon();
+        terminal.loadAddon(webglAddon);
+        webglAddonRef.current = webglAddon;
+        console.log('[TerminalNode] ✅ WebGL renderer enabled', { terminalId });
+      } catch (error) {
+        console.warn(
+          '[TerminalNode] ⚠️ WebGL addon failed to load, falling back to canvas renderer',
+          error
+        );
+      }
+
+      // Fit terminal after open + WebGL
+      try {
+        fitAddon.fit();
+      } catch (error) {
+        console.warn('[TerminalNode] Error fitting terminal initially, retrying...', error);
+        setTimeout(() => {
+          try {
+            if (fitAddonRef.current && terminalInstanceRef.current) {
+              fitAddonRef.current.fit();
+            }
+          } catch (retryError) {
+            console.error('[TerminalNode] Failed to fit terminal on retry', retryError);
           }
-        } catch (retryError) {
-          console.error('[TerminalNode] Failed to fit terminal on retry', retryError);
-        }
-      }, 100);
-    }
+        }, 100);
+      }
+    });
 
     // Log initial state
     console.log('[TerminalNode] ✅ Terminal mounted successfully', {
