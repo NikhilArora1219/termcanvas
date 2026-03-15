@@ -45,6 +45,7 @@ function TerminalNode({ data, id, selected }: NodeProps) {
   const webglAddonRef = useRef<WebglAddon | null>(null);
   const isInitializedRef = useRef(false); // Guard against double initialization (React StrictMode)
   const terminalProcessCreatedRef = useRef(false); // Guard against multiple process creations
+  const restartCountRef = useRef(0); // Limit terminal restart attempts to prevent infinite loops
   const terminalId = nodeData.terminalId;
 
   const count = useRef(0);
@@ -712,18 +713,28 @@ function TerminalNode({ data, id, selected }: NodeProps) {
             terminal.write(`[Shell: ${process.env.SHELL || '/bin/bash'}]\r\n`);
           }
 
-          // Automatically restart the terminal (but delay longer for immediate exits to avoid loop)
+          // Restart terminal with a retry limit to prevent infinite loops
           if (window.electronAPI) {
-            setTimeout(
-              () => {
-                // Reset the flag to allow recreation
+            if (!restartCountRef.current) restartCountRef.current = 0;
+            restartCountRef.current++;
+
+            if (restartCountRef.current <= 3) {
+              const delay = isImmediateExit ? 2000 : 500;
+              console.log('[TerminalNode] Restarting terminal process', {
+                terminalId,
+                attempt: restartCountRef.current,
+              });
+              setTimeout(() => {
                 terminalProcessCreatedRef.current = false;
-                console.log('[TerminalNode] Restarting terminal process', { terminalId });
                 window.electronAPI?.createTerminal(terminalId, nodeData.workspacePath);
                 terminalProcessCreatedRef.current = true;
-              },
-              isImmediateExit ? 1000 : 100
-            );
+              }, delay);
+            } else {
+              terminal.write(
+                '\r\n[Max restart attempts reached. Right-click canvas to create a new terminal.]\r\n'
+              );
+              console.warn('[TerminalNode] Max restart attempts reached, stopping', { terminalId });
+            }
           }
         }
       };
@@ -750,6 +761,9 @@ function TerminalNode({ data, id, selected }: NodeProps) {
 
     const performFit = () => {
       if (!fitAddonRef.current || !terminalInstanceRef.current || !terminalRef.current) return;
+      // Guard: skip fit if container has no dimensions yet (prevents xterm 'dimensions' error)
+      const container = terminalRef.current;
+      if (container.clientWidth === 0 || container.clientHeight === 0) return;
 
       try {
         isFitting = true;
