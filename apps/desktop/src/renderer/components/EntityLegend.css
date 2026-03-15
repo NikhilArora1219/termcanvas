@@ -1,28 +1,40 @@
 .entity-legend {
   position: absolute;
   bottom: 16px;
-  left: 24px;
+  right: 16px;
   background: var(--color-bg-primary);
   border: 1px solid var(--color-border);
   border-radius: 8px;
-  padding: 10px 14px;
+  padding: 8px 12px;
   z-index: 5;
   pointer-events: auto;
 }
 
-.entity-legend-title {
+.entity-legend-toggle {
+  background: none;
+  border: none;
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 1px;
   color: var(--color-text-secondary);
-  margin-bottom: 8px;
   font-family: "SF Mono", "Menlo", monospace;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 4px;
+  display: block;
+  width: 100%;
+  text-align: left;
+}
+
+.entity-legend-toggle:hover {
+  color: var(--color-text-primary);
 }
 
 .entity-legend-items {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px 16px;
+  gap: 6px 14px;
+  margin-top: 6px;
 }
 
 .entity-legend-item {
